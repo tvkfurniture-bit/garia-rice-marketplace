@@ -1,0 +1,627 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - header.html
+     Master Responsive Header & Hyperlocal Locality Selector
+     ============================================================================== -->
+
+<div class="header-inner-wrap">
+  <div class="header-container">
+    
+    <!-- Left: Hamburger Toggle (Mobile Only) & Brand Logo -->
+    <div class="header-brand-group">
+      <button id="hamburger-btn" class="hamburger-btn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+
+      <a href="#/home" class="brand-logo" aria-label="Garia Rice Marketplace Home">
+        <span class="brand-icon">🌾</span>
+        <div class="brand-text-block">
+          <span class="brand-title">GARIA RICE</span>
+          <span class="brand-subtitle">MARKETPLACE™</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Center-Left: Hyperlocal Locality Selector -->
+    <div class="locality-selector-wrap" title="Select your delivery locality in Garia">
+      <span class="locality-pin-icon" aria-hidden="true">📍</span>
+      <select id="header-locality-select" class="locality-select" aria-label="Choose delivery locality in Garia">
+        <option value="Garia Station">Garia Station & Kanungo Park</option>
+        <option value="Baishnabghata Patuli">Baishnabghata & Patuli</option>
+        <option value="Mahamayatala">Mahamayatala & Garia Main Rd</option>
+        <option value="Naktala">Naktala & Bansdroni Border</option>
+        <option value="Kamalgazi">Kamalgazi & Narendrapur</option>
+        <option value="Boral">Boral & Rajpur Border</option>
+      </select>
+    </div>
+
+    <!-- Center-Right: Desktop Navigation Links -->
+    <nav class="desktop-nav-menu" aria-label="Main navigation">
+      <a href="#/compare" class="nav-link nav-link-highlight">
+        <span class="nav-link-badge">COMPARE</span> Rice Prices
+      </a>
+      <a href="#/catalog" class="nav-link">Browse Rice</a>
+      <a href="#/become-a-seller" class="nav-link nav-link-seller">Become a Seller</a>
+      <a href="#/become-a-delivery-partner" class="nav-link">Deliver Rice</a>
+    </nav>
+
+    <!-- Right: Account Button & Sticky Cart Trigger -->
+    <div class="header-actions-group">
+      <button id="header-account-btn" class="header-action-btn account-btn" aria-label="User Account">
+        <span class="action-icon" aria-hidden="true">👤</span>
+        <span id="header-account-label" class="action-label">Login</span>
+      </button>
+
+      <a href="#/checkout" id="header-cart-btn" class="header-action-btn cart-btn" aria-label="View Shopping Basket">
+        <span class="action-icon" aria-hidden="true">🛒</span>
+        <span class="action-label cart-label">Basket</span>
+        <span id="header-cart-count" class="cart-count-badge" aria-live="polite">0</span>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==============================================================================
+     OFF-CANVAS MOBILE NAVIGATION DRAWER
+     ============================================================================== -->
+<div id="mobile-drawer-overlay" class="drawer-overlay hidden" aria-hidden="true"></div>
+
+<aside id="mobile-nav-drawer" class="mobile-drawer hidden" aria-label="Mobile Navigation" aria-hidden="true">
+  <div class="drawer-header">
+    <div class="drawer-brand">
+      <span class="brand-icon">🌾</span>
+      <span class="drawer-brand-name">Garia Rice Marketplace™</span>
+    </div>
+    <button id="drawer-close-btn" class="drawer-close-btn" aria-label="Close navigation menu">&times;</button>
+  </div>
+
+  <div class="drawer-body">
+    <!-- Mobile Locality Selector -->
+    <div class="drawer-section">
+      <label class="drawer-label" for="drawer-locality-select">Delivery Locality:</label>
+      <select id="drawer-locality-select" class="form-select">
+        <option value="Garia Station">Garia Station & Kanungo Park</option>
+        <option value="Baishnabghata Patuli">Baishnabghata & Patuli</option>
+        <option value="Mahamayatala">Mahamayatala & Garia Main Rd</option>
+        <option value="Naktala">Naktala & Bansdroni Border</option>
+        <option value="Kamalgazi">Kamalgazi & Narendrapur</option>
+        <option value="Boral">Boral & Rajpur Border</option>
+      </select>
+    </div>
+
+    <!-- Mobile Navigation Links -->
+    <div class="drawer-links-group">
+      <a href="#/home" class="drawer-nav-item">
+        <span class="drawer-item-icon">🏠</span> Home
+      </a>
+      <a href="#/compare" class="drawer-nav-item highlight-item">
+        <span class="drawer-item-icon">⚖️</span> Compare Rice Prices
+      </a>
+      <a href="#/catalog" class="drawer-nav-item">
+        <span class="drawer-item-icon">🌾</span> All Rice Varieties (2kg to 50kg)
+      </a>
+      <a href="#/checkout" class="drawer-nav-item">
+        <span class="drawer-item-icon">🛒</span> View Basket (<span id="drawer-cart-count">0</span>)
+      </a>
+      <a href="#/account" class="drawer-nav-item" id="drawer-account-link">
+        <span class="drawer-item-icon">👤</span> My Account & Orders
+      </a>
+    </div>
+
+    <hr class="drawer-divider">
+
+    <!-- Partner Onboarding Shortcuts -->
+    <div class="drawer-section">
+      <div class="drawer-label">Join Our Local Platform:</div>
+      <a href="#/become-a-seller" class="btn btn-outline btn-block drawer-btn">Register as Rice Merchant</a>
+      <a href="#/become-a-delivery-partner" class="btn btn-secondary btn-block drawer-btn" style="margin-top:8px;">Become Delivery Partner</a>
+    </div>
+
+    <hr class="drawer-divider">
+
+    <!-- Customer Support Footnote -->
+    <div class="drawer-support-box">
+      <p>📞 Helpline: <a href="tel:+919830000000" style="color:#1b4332;font-weight:700;text-decoration:none;">+91 98300 00000</a></p>
+      <p style="margin-top:4px;font-size:11px;color:#64748b;">Hyperlocal delivery serving Garia, Kolkata.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- ==============================================================================
+     HEADER INLINE STYLES & BEHAVIOR
+     ============================================================================== -->
+<style>
+/* Header Wrapper & Bar */
+.header-inner-wrap {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Brand Identity */
+.header-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.brand-icon {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.brand-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.brand-subtitle {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #b7e4c7;
+}
+
+/* Locality Selector Dropdown */
+.locality-selector-wrap {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  gap: 6px;
+  max-width: 260px;
+}
+
+.locality-pin-icon {
+  font-size: 14px;
+}
+
+.locality-select {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.locality-select option {
+  background-color: #ffffff;
+  color: var(--color-text-main);
+}
+
+/* Desktop Navigation Menu */
+.desktop-nav-menu {
+  display: none;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-link {
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.nav-link-highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #fef08a;
+}
+.nav-link-highlight:hover { color: #ffffff; }
+
+.nav-link-badge {
+  background-color: #f59e0b;
+  color: #78350f;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.nav-link-seller {
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+}
+
+/* Action Group: Account & Cart Buttons */
+.header-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.account-btn {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+.account-btn:hover {
+  background-color: rgba(255, 255, 255, 0.22);
+}
+
+.cart-btn {
+  background-color: #f59e0b;
+  color: #78350f;
+  position: relative;
+  font-weight: 700;
+}
+.cart-btn:hover {
+  background-color: #d97706;
+  color: #ffffff;
+}
+
+.cart-count-badge {
+  background-color: #dc2626;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* Hamburger Toggle Button (Mobile) */
+.hamburger-btn {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: var(--min-touch-target);
+  height: var(--min-touch-target);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.hamburger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: transform 0.2s ease;
+}
+
+/* Mobile Drawer Overlay */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+}
+
+/* Off-Canvas Drawer */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 82%;
+  max-width: 320px;
+  background-color: #ffffff;
+  z-index: 1001;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(0);
+  transition: transform 0.25s ease-in-out;
+}
+
+.drawer-header {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawer-brand-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: #ffffff;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+}
+
+.drawer-body {
+  padding: 16px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.drawer-section {
+  margin-bottom: 16px;
+}
+
+.drawer-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.drawer-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  margin-bottom: 4px;
+}
+
+.drawer-nav-item:hover {
+  background-color: #f1f5f9;
+}
+
+.drawer-nav-item.highlight-item {
+  background-color: #fefce8;
+  color: #92400e;
+}
+
+.drawer-divider {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 16px 0;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.drawer-support-box {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Responsive Media Queries */
+@media (min-width: 900px) {
+  .hamburger-btn {
+    display: none;
+  }
+  .desktop-nav-menu {
+    display: flex;
+  }
+}
+
+@media (max-width: 600px) {
+  .locality-selector-wrap {
+    display: none; /* Locality selector moves into mobile drawer on tiny screens */
+  }
+  .brand-title {
+    font-size: 15px;
+  }
+  .action-label.cart-label {
+    display: none; /* Icon and badge only on small mobile */
+  }
+}
+</style>
+
+<script>
+// ==============================================================================
+// HEADER COMPONENT EVENT CONTROLLER
+// ==============================================================================
+(function() {
+  function initHeader() {
+    const localitySelect = document.getElementById('header-locality-select');
+    const drawerLocalitySelect = document.getElementById('drawer-locality-select');
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const drawer = document.getElementById('mobile-nav-drawer');
+    const overlay = document.getElementById('mobile-drawer-overlay');
+    const closeBtn = document.getElementById('drawer-close-btn');
+    const cartCountEl = document.getElementById('header-cart-count');
+    const drawerCartCountEl = document.getElementById('drawer-cart-count');
+    const accountBtn = document.getElementById('header-account-btn');
+    const accountLabel = document.getElementById('header-account-label');
+
+    // 1. Sync Active Locality with AppStore
+    const currentLocality = window.AppStore ? window.AppStore.state.selectedLocality : 'Garia Station';
+    if (localitySelect) localitySelect.value = currentLocality;
+    if (drawerLocalitySelect) drawerLocalitySelect.value = currentLocality;
+
+    function handleLocalityChange(e) {
+      const newLocality = e.target.value;
+      if (localitySelect) localitySelect.value = newLocality;
+      if (drawerLocalitySelect) drawerLocalitySelect.value = newLocality;
+      if (window.AppStore) {
+        window.AppStore.setLocality(newLocality);
+        window.AppUI.showToast(`Delivery location set to ${newLocality}`, 'info');
+      }
+    }
+
+    if (localitySelect) localitySelect.addEventListener('change', handleLocalityChange);
+    if (drawerLocalitySelect) drawerLocalitySelect.addEventListener('change', handleLocalityChange);
+
+    // 2. Sync Cart Counter
+    function updateCartBadge() {
+      const count = window.AppCart ? window.AppCart.getCount() : 0;
+      if (cartCountEl) cartCountEl.textContent = String(count);
+      if (drawerCartCountEl) drawerCartCountEl.textContent = String(count);
+    }
+    updateCartBadge();
+
+    if (window.AppStore) {
+      window.AppStore.subscribe((event) => {
+        if (event === 'CART_CHANGED') {
+          updateCartBadge();
+        } else if (event === 'AUTH_CHANGED') {
+          updateAccountButton();
+        }
+      });
+    }
+
+    // 3. User Account Button Action
+    function updateAccountButton() {
+      const user = window.AppStore ? window.AppStore.state.currentUser : null;
+      if (accountLabel) {
+        accountLabel.textContent = user ? (user.phone ? user.phone.slice(-4) : 'Account') : 'Login';
+      }
+    }
+    updateAccountButton();
+
+    if (accountBtn) {
+      accountBtn.addEventListener('click', () => {
+        const token = window.AppStore ? window.AppStore.state.authToken : null;
+        if (token) {
+          window.AppRouter.navigate('/account');
+        } else {
+          // Open phone login modal via AppUI
+          promptQuickLogin();
+        }
+      });
+    }
+
+    function promptQuickLogin() {
+      window.AppUI.showModal(
+        'Login or Register',
+        `<p style="margin-bottom:12px;font-size:14px;color:#475569;">Enter your 10-digit mobile number to view saved addresses and order history:</p>
+         <div class="form-group">
+           <label class="form-label" for="login-phone-input">Mobile Number (+91)</label>
+           <input type="tel" id="login-phone-input" class="form-input" placeholder="e.g. 9830012345" maxlength="10">
+         </div>`,
+        () => {
+          const input = document.getElementById('login-phone-input');
+          const phone = input ? input.value.trim() : '';
+          if (phone.length === 10) {
+            window.AppUI.showLoader('Logging In', 'Verifying session...');
+            window.AppApi.call('authenticateUser', { phone: phone, role: 'CUSTOMER' })
+              .then(res => {
+                window.AppStore.setAuth(res.token, res.user);
+                window.AppUI.showToast('Logged in successfully!', 'success');
+              })
+              .catch(err => {
+                window.AppUI.showToast(err.error || 'Login failed', 'error');
+              })
+              .finally(() => window.AppUI.hideLoader());
+          } else {
+            window.AppUI.showToast('Please enter a valid 10-digit mobile number.', 'error');
+          }
+        },
+        'Continue'
+      );
+    }
+
+    // 4. Mobile Drawer Controls
+    function openDrawer() {
+      if (drawer && overlay) {
+        drawer.classList.remove('hidden');
+        overlay.classList.remove('hidden');
+        drawer.setAttribute('aria-hidden', 'false');
+        overlay.setAttribute('aria-hidden', 'false');
+        if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    function closeDrawer() {
+      if (drawer && overlay) {
+        drawer.classList.add('hidden');
+        overlay.classList.add('hidden');
+        drawer.setAttribute('aria-hidden', 'true');
+        overlay.setAttribute('aria-hidden', 'true');
+        if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    if (hamburgerBtn) hamburgerBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (overlay) overlay.addEventListener('click', closeDrawer);
+
+    // Close drawer when any internal navigation link is clicked
+    document.querySelectorAll('.drawer-nav-item, .drawer-btn').forEach(link => {
+      link.addEventListener('click', closeDrawer);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeader);
+  } else {
+    initHeader();
+  }
+})();
+</script>
