@@ -1,0 +1,670 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - catalog_view.html
+     Master Product Catalog, Filtering & Search Results View (Sections 13, 14, 15)
+     ============================================================================== -->
+
+<div class="catalog-view-container">
+
+  <!-- Top Search Bar Mount (File 28) -->
+  <div class="catalog-search-wrap">
+    <?!= include('search_bar') ?>
+  </div>
+
+  <!-- Catalog Control Bar (Results Count, Mobile Filter Trigger, Sort Select) -->
+  <div class="catalog-control-bar">
+    <div class="catalog-meta-info">
+      <h1 id="catalog-title" class="catalog-title">All Rice Varieties</h1>
+      <span id="catalog-results-count" class="catalog-count-badge">Loading...</span>
+    </div>
+
+    <div class="catalog-actions-bar">
+      <!-- Mobile Filter Toggle Button (< 900px) -->
+      <button type="button" id="catalog-mobile-filter-btn" class="btn btn-secondary catalog-filter-btn-mobile" aria-label="Open filter options">
+        <span>⚙️</span> Filters
+      </button>
+
+      <!-- Sort Dropdown (Section 15) -->
+      <div class="catalog-sort-wrap">
+        <label for="catalog-sort-select" class="sort-label">Sort:</label>
+        <select id="catalog-sort-select" class="form-select sort-select" aria-label="Sort products by">
+          <option value="BEST_VALUE">Best Delivered Value (Lowest Total)</option>
+          <option value="PRICE_ASC">Lowest Rice Price</option>
+          <option value="NEAREST">Nearest Seller</option>
+          <option value="RATING_DESC">Highest Seller Rating</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main 2-Column Catalog Layout (Sidebar Filters + Products Grid) -->
+  <div class="catalog-layout-grid">
+
+    <!-- Left Column: Filter Sidebar (Desktop >= 900px) / Slide Drawer on Mobile -->
+    <aside id="catalog-filter-sidebar" class="catalog-filter-sidebar" aria-label="Product filters">
+      <div class="filter-sidebar-card">
+        
+        <div class="filter-sidebar-header">
+          <h3 class="filter-sidebar-title">Filter Rice</h3>
+          <button type="button" id="filter-reset-btn" class="filter-reset-link">Reset All</button>
+          <button type="button" id="filter-sidebar-close" class="filter-sidebar-close-btn">&times;</button>
+        </div>
+
+        <form id="catalog-filter-form" onsubmit="return false;">
+          
+          <!-- Filter 1: Rice Variety -->
+          <div class="filter-group">
+            <h4 class="filter-group-heading">Rice Variety</h4>
+            <div class="filter-checkbox-list">
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="variety" value="Miniket" class="filter-check"> Miniket (মিনিকেট)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="variety" value="Gobindobhog" class="filter-check"> Gobindobhog (গোবিন্দভোগ)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="variety" value="Ratna" class="filter-check"> Ratna (রত্না)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="variety" value="Swarna" class="filter-check"> Swarna (স্বর্ণা)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="variety" value="Banskathi" class="filter-check"> Banskathi (বাঁশকাঠি)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="variety" value="Dudheshwar" class="filter-check"> Dudheshwar (দুধেশ্বর)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="variety" value="Basmati" class="filter-check"> Dehradun Basmati (বাসমতী)
+              </label>
+            </div>
+          </div>
+
+          <hr class="filter-divider">
+
+          <!-- Filter 2: Pack Size (kg) -->
+          <div class="filter-group">
+            <h4 class="filter-group-heading">Pack Size (Weight)</h4>
+            <div class="filter-checkbox-list">
+              <label class="filter-checkbox-label">
+                <input type="radio" name="pack_size" value="" class="filter-radio" checked> Any Size
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="pack_size" value="2" class="filter-radio"> 2 kg (Specialty)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="pack_size" value="5" class="filter-radio"> 5 kg
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="pack_size" value="10" class="filter-radio"> 10 kg
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="pack_size" value="25" class="filter-radio"> 25 kg (Daily Staple)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="pack_size" value="26" class="filter-radio"> 26 kg
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="pack_size" value="50" class="filter-radio"> 50 kg (Bulk Wholesale)
+              </label>
+            </div>
+          </div>
+
+          <hr class="filter-divider">
+
+          <!-- Filter 3: Grain Type -->
+          <div class="filter-group">
+            <h4 class="filter-group-heading">Grain Type</h4>
+            <div class="filter-checkbox-list">
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="grain_type" value="PARBOILED" class="filter-check"> Parboiled (সিদ্ধ)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="grain_type" value="RAW" class="filter-check"> Raw / Atap (আতপ)
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="grain_type" value="AROMATIC" class="filter-check"> Aromatic (সুগন্ধী)
+              </label>
+            </div>
+          </div>
+
+          <hr class="filter-divider">
+
+          <!-- Filter 4: Max Price Ceiling -->
+          <div class="filter-group">
+            <h4 class="filter-group-heading">Max Price (₹)</h4>
+            <div class="flex items-center gap-2">
+              <input type="number" id="filter-max-price" class="form-input" placeholder="e.g. 1500" min="100" max="10000" step="50">
+              <button type="button" id="filter-apply-price-btn" class="btn btn-secondary btn-sm">Go</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </aside>
+
+    <!-- Right Column: Product Cards Results Grid -->
+    <main class="catalog-products-main" aria-label="Rice products catalog">
+      <div id="catalog-products-grid" class="product-grid" style="margin-top:0;">
+        <!-- Populated dynamically by CatalogViewController -->
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- ==============================================================================
+     CATALOG VIEW INLINE STYLES
+     ============================================================================== -->
+<style>
+.catalog-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.catalog-search-wrap {
+  margin-bottom: 8px;
+}
+
+/* Control Bar */
+.catalog-control-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: #ffffff;
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.catalog-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.catalog-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.catalog-count-badge {
+  font-size: 12px;
+  font-weight: 600;
+  background-color: var(--color-accent);
+  color: var(--color-primary);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.catalog-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.catalog-filter-btn-mobile {
+  display: inline-flex;
+}
+
+@media (min-width: 900px) {
+  .catalog-filter-btn-mobile {
+    display: none; /* Hidden on desktop since sidebar is always visible */
+  }
+}
+
+.catalog-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.sort-select {
+  min-height: 38px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  max-width: 260px;
+}
+
+/* 2-Column Grid Layout */
+.catalog-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .catalog-layout-grid {
+    grid-template-columns: 260px 1fr;
+  }
+}
+
+/* Filter Sidebar Desktop */
+.catalog-filter-sidebar {
+  display: block;
+}
+
+.filter-sidebar-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 80px;
+}
+
+.filter-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.filter-sidebar-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.filter-reset-link {
+  background: none;
+  border: none;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filter-reset-link:hover { text-decoration: underline; }
+
+.filter-sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.filter-group-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-main);
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-check, .filter-radio {
+  accent-color: var(--color-primary-light);
+  width: 16px;
+  height: 16px;
+}
+
+.filter-divider {
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  margin: 14px 0;
+}
+
+/* Mobile Filter Drawer Overlay (< 900px) */
+@media (max-width: 899px) {
+  .catalog-filter-sidebar {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1002;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(2px);
+  }
+
+  .catalog-filter-sidebar.drawer-open {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .catalog-filter-sidebar.drawer-open .filter-sidebar-card {
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    border-radius: 0;
+    overflow-y: auto;
+    position: relative;
+    top: 0;
+  }
+
+  .filter-sidebar-close-btn {
+    display: block;
+  }
+}
+
+/* Catalog Card Compare Trigger Button */
+.btn-card-compare {
+  margin-top: 6px;
+  width: 100%;
+  font-size: 12px;
+  min-height: 32px;
+  padding: 4px 8px;
+}
+</style>
+
+<!-- ==============================================================================
+     CATALOG VIEW CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  const CatalogViewController = {
+    currentFilters: {
+      q: '',
+      variety: '',
+      pack_size: '',
+      grain_type: '',
+      max_price: '',
+      locality: 'Garia Station',
+      sort: 'BEST_VALUE'
+    },
+
+    init() {
+      // Register catalog routes with SPA router
+      if (window.AppRouter) {
+        const routeHandler = (segments, params) => this.render(params);
+        window.AppRouter.register('catalog', routeHandler);
+        window.AppRouter.register('search', routeHandler);
+        window.AppRouter.register('products', routeHandler);
+      }
+
+      this.bindFilterEvents_();
+    },
+
+    render(params = {}) {
+      const catalogViewEl = document.getElementById('view-catalog');
+      if (catalogViewEl) {
+        catalogViewEl.classList.remove('hidden');
+      }
+
+      // Sync active state from URL params
+      this.currentFilters.q = params.q || '';
+      this.currentFilters.pack_size = params.pack_size || '';
+      this.currentFilters.variety = params.variety || '';
+      this.currentFilters.locality = params.locality || (window.AppStore ? window.AppStore.state.selectedLocality : 'Garia Station');
+      this.currentFilters.sort = params.sort || 'BEST_VALUE';
+
+      const titleEl = document.getElementById('catalog-title');
+      if (titleEl) {
+        titleEl.textContent = this.currentFilters.q
+          ? `Results for "${this.currentFilters.q}"`
+          : 'All Rice Varieties';
+      }
+
+      const sortSelect = document.getElementById('catalog-sort-select');
+      if (sortSelect) {
+        sortSelect.value = this.currentFilters.sort;
+      }
+
+      this.fetchAndRenderCatalog_();
+    },
+
+    fetchAndRenderCatalog_() {
+      const grid = document.getElementById('catalog-products-grid');
+      const countBadge = document.getElementById('catalog-results-count');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!grid || !window.AppApi) return;
+
+      // 1. Loading Skeleton State
+      grid.innerHTML = `
+        <div class="card text-center" style="grid-column:1/-1;padding:40px;color:#64748b;">
+          <div style="font-size:32px;animation:pulse 1s infinite;">🌾</div>
+          <div style="font-weight:700;margin-top:8px;">Finding and ranking rice offerings in Garia...</div>
+          <div style="font-size:12px;color:#94a3b8;">Delivering to ${escapeHtml(this.currentFilters.locality)}</div>
+        </div>`;
+      if (countBadge) countBadge.textContent = 'Searching...';
+
+      // 2. Query Backend via RPC Bridge
+      const queryPayload = {
+        query: this.currentFilters.q,
+        variety: this.currentFilters.variety,
+        pack_size: this.currentFilters.pack_size,
+        grain_type: this.currentFilters.grain_type,
+        max_price: this.currentFilters.max_price,
+        customer_locality: this.currentFilters.locality,
+        sort: this.currentFilters.sort,
+        limit: 40
+      };
+
+      const apiAction = this.currentFilters.q ? 'searchProducts' : 'getPublicCatalog';
+
+      window.AppApi.call(apiAction, queryPayload)
+        .then(res => {
+          const products = res.products || [];
+          if (countBadge) countBadge.textContent = `${products.length} Products Found`;
+
+          if (products.length === 0) {
+            grid.innerHTML = `
+              <div class="card text-center" style="grid-column:1/-1;padding:40px;">
+                <div style="font-size:36px;margin-bottom:10px;">🔍</div>
+                <h3 style="color:var(--color-primary);margin-bottom:6px;">No Rice Products Match Your Filters</h3>
+                <p style="color:#64748b;font-size:14px;max-width:480px;margin:0 auto 16px auto;">
+                  Try clearing your search terms or expanding your pack size filter to find available local rice stock in Garia.
+                </p>
+                <button type="button" class="btn btn-secondary" onclick="window.CatalogViewController.resetFilters()">
+                  Reset All Filters
+                </button>
+              </div>`;
+            return;
+          }
+
+          // 3. Assemble Product Cards HTML
+          let cardsHtml = '';
+          products.forEach((p, idx) => {
+            const isBestValue = idx === 0 && (this.currentFilters.sort === 'BEST_VALUE');
+            const bestBadge = isBestValue ? '<span class="badge badge-best-value" style="margin-bottom:6px;">🏆 Best Delivered Value</span>' : '';
+
+            cardsHtml += `
+              <div class="product-card card-hover">
+                <div class="product-card-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80" alt="${escapeHtml(p.name_en)}" class="product-card-img" loading="lazy">
+                </div>
+                <div class="product-card-body">
+                  ${bestBadge}
+                  <a href="#/product/${p.product_id}" style="text-decoration:none;color:inherit;">
+                    <h3 class="product-card-title">${escapeHtml(p.name_en)}</h3>
+                  </a>
+                  <div class="product-card-seller">🏪 ${escapeHtml(p.seller_business_name)} (${escapeHtml(p.seller_locality)})</div>
+
+                  <div style="font-size:12px;color:#64748b;margin-bottom:8px;">
+                    Pack: <strong>${p.pack_size_kg} kg</strong> | Grain: ${escapeHtml(p.grain_type)}
+                  </div>
+
+                  <div class="product-card-price-row">
+                    <div>
+                      <div class="price-main">${curr}${p.price_inr}</div>
+                      <div class="price-delivery-tag">+ ${curr}${p.delivery_fee_inr} delivery (~ ${p.approx_distance_km} km)</div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm btn-catalog-add" data-product-id="${p.product_id}">
+                      + Add
+                    </button>
+                  </div>
+
+                  <button type="button" class="btn btn-outline btn-card-compare" data-variety="${escapeHtml(p.variety)}" data-pack="${p.pack_size_kg}">
+                    ⚖️ Compare All Sellers
+                  </button>
+                </div>
+              </div>`;
+          });
+
+          grid.innerHTML = cardsHtml;
+
+          // 4. Bind Add to Basket Buttons
+          grid.querySelectorAll('.btn-catalog-add').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const pid = e.currentTarget.getAttribute('data-product-id');
+              const found = products.find(x => x.product_id === pid);
+              if (found && window.AppCart) {
+                window.AppCart.addItem(found, 1);
+              }
+            });
+          });
+
+          // 5. Bind Compare Sellers Modal Buttons
+          grid.querySelectorAll('.btn-card-compare').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const variety = e.currentTarget.getAttribute('data-variety');
+              const pack = parseFloat(e.currentTarget.getAttribute('data-pack'));
+              this.openComparisonModal_(variety, pack);
+            });
+          });
+
+        })
+        .catch(err => {
+          grid.innerHTML = `
+            <div class="card text-center" style="grid-column:1/-1;padding:24px;color:var(--color-danger);">
+              Failed to load catalog products: ${escapeHtml(err.error || 'Connection error')}
+            </div>`;
+        });
+    },
+
+    openComparisonModal_(variety, packSizeKg) {
+      const modalMountId = 'modal-comparison-mount';
+      window.AppUI.showModal(
+        `Compare Sellers: ${variety} (${packSizeKg}kg)`,
+        `<div id="${modalMountId}"></div>`,
+        null,
+        'Close'
+      );
+
+      // Mount comparison matrix into modal dialog
+      if (typeof window.renderComparisonMatrix === 'function') {
+        window.renderComparisonMatrix(variety, packSizeKg, this.currentFilters.locality, modalMountId);
+      }
+    },
+
+    bindFilterEvents_() {
+      const sortSelect = document.getElementById('catalog-sort-select');
+      const mobileFilterBtn = document.getElementById('catalog-mobile-filter-btn');
+      const filterSidebar = document.getElementById('catalog-filter-sidebar');
+      const filterCloseBtn = document.getElementById('filter-sidebar-close');
+      const resetBtn = document.getElementById('filter-reset-btn');
+      const priceBtn = document.getElementById('filter-apply-price-btn');
+      const maxPriceInput = document.getElementById('filter-max-price');
+
+      // Sort change
+      if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+          this.currentFilters.sort = e.target.value;
+          this.fetchAndRenderCatalog_();
+        });
+      }
+
+      // Mobile filter drawer open/close
+      if (mobileFilterBtn && filterSidebar) {
+        mobileFilterBtn.addEventListener('click', () => {
+          filterSidebar.classList.add('drawer-open');
+        });
+      }
+
+      if (filterCloseBtn && filterSidebar) {
+        filterCloseBtn.addEventListener('click', () => {
+          filterSidebar.classList.remove('drawer-open');
+        });
+      }
+
+      // Checkbox and Radio Filter changes
+      document.querySelectorAll('.filter-check, .filter-radio').forEach(input => {
+        input.addEventListener('change', () => {
+          if (input.name === 'pack_size') {
+            this.currentFilters.pack_size = input.value;
+          } else if (input.name === 'variety') {
+            const checkedVarieties = Array.from(document.querySelectorAll('input[name="variety"]:checked')).map(el => el.value);
+            this.currentFilters.variety = checkedVarieties.join(',');
+          } else if (input.name === 'grain_type') {
+            const checkedGrains = Array.from(document.querySelectorAll('input[name="grain_type"]:checked')).map(el => el.value);
+            this.currentFilters.grain_type = checkedGrains.join(',');
+          }
+          this.fetchAndRenderCatalog_();
+        });
+      });
+
+      // Price filter apply
+      if (priceBtn && maxPriceInput) {
+        priceBtn.addEventListener('click', () => {
+          this.currentFilters.max_price = maxPriceInput.value.trim();
+          this.fetchAndRenderCatalog_();
+        });
+      }
+
+      // Reset filters
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => this.resetFilters());
+      }
+    },
+
+    resetFilters() {
+      this.currentFilters.q = '';
+      this.currentFilters.variety = '';
+      this.currentFilters.pack_size = '';
+      this.currentFilters.grain_type = '';
+      this.currentFilters.max_price = '';
+      this.currentFilters.sort = 'BEST_VALUE';
+
+      document.querySelectorAll('.filter-check').forEach(c => c.checked = false);
+      const defaultRadio = document.querySelector('input[name="pack_size"][value=""]');
+      if (defaultRadio) defaultRadio.checked = true;
+      const maxPriceInput = document.getElementById('filter-max-price');
+      if (maxPriceInput) maxPriceInput.value = '';
+
+      const sidebar = document.getElementById('catalog-filter-sidebar');
+      if (sidebar) sidebar.classList.remove('drawer-open');
+
+      this.fetchAndRenderCatalog_();
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.CatalogViewController = CatalogViewController;
+  CatalogViewController.init();
+
+})(window);
+</script>
