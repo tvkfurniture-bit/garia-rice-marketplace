@@ -1,0 +1,78 @@
+# ==============================================================================
+# GARIA RICE MARKETPLACE™ - .gitignore
+# Production Git Ignore Rules for Web & Browser-Native Apps Script Development
+# ==============================================================================
+
+# 1. SENSITIVE CREDENTIALS & SECRETS (NEVER COMMIT)
+*.env
+*.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+secrets.*
+credentials.json
+client_secret*.json
+service_account*.json
+oauth_*.json
+token.json
+
+# 2. SPREADSHEET & DATABASE BACKUPS (CUSTOMER PII PROTECTION)
+*.csv
+*.tsv
+*.xlsx
+*.xls
+/backups/
+/exports/
+/data_dumps/
+dump_*.json
+backup_*.json
+
+# 3. GOOGLE APPS SCRIPT LOCAL TOOLING (IF EVER ACCESSED LOCALLY)
+.clasp.json
+.claspignore
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 4. OPERATING SYSTEM ARTIFACTS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# 5. CODE EDITORS & IDE CONFIGURATION
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*~
+
+# 6. LOGS, CACHE & TEMPORARY SCRATCHPADS
+*.log
+logs/
+temp/
+tmp/
+scratchpad/
+*.bak
+*.orig
+
+# 7. EXPLICIT PRESERVATION WHITELIST (ENSURE REPO INTEGRITY)
+!appsscript.json
+!.gitignore
+!README.md
+!CHANGELOG.md
