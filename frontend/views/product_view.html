@@ -1,0 +1,641 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - product_view.html
+     Master Product Details, Seller Comparison & Viral Share View (Sections 19, 20)
+     ============================================================================== -->
+
+<div class="product-view-container">
+
+  <!-- Breadcrumbs Bar -->
+  <nav class="product-breadcrumbs" aria-label="Breadcrumb">
+    <a href="#/home" class="breadcrumb-link">Home</a>
+    <span class="breadcrumb-sep">&gt;</span>
+    <a href="#/catalog" class="breadcrumb-link">Catalog</a>
+    <span class="breadcrumb-sep">&gt;</span>
+    <span id="product-breadcrumb-active" class="breadcrumb-current">Rice Details</span>
+  </nav>
+
+  <!-- Product Details Mount Container -->
+  <div id="product-details-mount" class="product-details-mount">
+    <!-- Populated dynamically by ProductViewController -->
+    <div class="card text-center" style="padding:60px;color:#64748b;">
+      <div style="font-size:36px;animation:pulse 1s infinite;">🌾</div>
+      <div style="font-size:16px;font-weight:700;margin-top:12px;">Loading verified rice specifications...</div>
+    </div>
+  </div>
+
+  <!-- Embedded Multi-Seller Comparison Tray (Section 16 & 19) -->
+  <section class="product-comparison-section" aria-label="Compare sellers offering equivalent rice">
+    <div id="product-comparison-tray" class="product-comparison-tray">
+      <!-- Mounted dynamically by window.renderComparisonMatrix() -->
+    </div>
+  </section>
+
+</div>
+
+<!-- ==============================================================================
+     PRODUCT VIEW INLINE STYLES
+     ============================================================================== -->
+<style>
+.product-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Breadcrumbs */
+.product-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.breadcrumb-link {
+  color: var(--color-primary-light);
+  text-decoration: none;
+  font-weight: 600;
+}
+.breadcrumb-link:hover { text-decoration: underline; }
+
+.breadcrumb-sep {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.breadcrumb-current {
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+/* Product Main Grid (Image Gallery + Details Column) */
+.product-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 840px) {
+  .product-main-grid {
+    grid-template-columns: 45% 55%;
+    gap: 36px;
+  }
+}
+
+/* Gallery Column */
+.product-gallery-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gallery-hero-img-wrap {
+  width: 100%;
+  height: 340px;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 840px) {
+  .gallery-hero-img-wrap { height: 420px; }
+}
+
+.gallery-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Details Column */
+.product-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.product-title-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+  .product-title-header h1 { font-size: 28px; }
+}
+
+.product-bengali-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.product-spec-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* Transparent Pricing Box */
+.transparent-price-card {
+  background-color: #ffffff;
+  border: 2px solid var(--color-primary-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.price-calculation-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.price-row-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.price-total-highlight {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 4px;
+}
+
+.total-delivered-label {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.total-delivered-amount {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--color-primary);
+}
+
+.delivery-distance-footnote {
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Purchase Actions Row */
+.purchase-actions-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.quantity-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.quantity-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: #ffffff;
+}
+
+.stepper-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stepper-btn:hover { background-color: #f1f5f9; }
+
+.stepper-val {
+  width: 44px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.btn-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 500px) {
+  .btn-actions-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.btn-buy-now {
+  background-color: #f59e0b;
+  color: #78350f;
+  font-weight: 800;
+}
+.btn-buy-now:hover { background-color: #d97706; color: #ffffff; }
+
+/* Merchant Bio Card */
+.seller-bio-card {
+  background-color: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seller-bio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seller-shop-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.seller-fssai-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background-color: #e8f5e9;
+  color: #1b4332;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+}
+
+/* Viral Social Sharing Bar (Section 20) */
+.social-share-bar {
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.share-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.btn-share-wa {
+  background-color: #25d366;
+  color: #ffffff;
+  font-weight: 700;
+}
+.btn-share-wa:hover { background-color: #128c7e; }
+
+.btn-share-native {
+  background-color: #f1f5f9;
+  color: var(--color-text-main);
+  border-color: var(--color-border);
+}
+</style>
+
+<!-- ==============================================================================
+     PRODUCT VIEW CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  let currentProductData = null;
+  let selectedQuantity = 1;
+
+  const ProductViewController = {
+    init() {
+      if (window.AppRouter) {
+        window.AppRouter.register('product', (segments, params) => {
+          const productId = segments[1] || params.id;
+          if (productId) {
+            this.render(productId);
+          } else {
+            window.AppRouter.navigate('/catalog');
+          }
+        });
+      }
+    },
+
+    render(productId) {
+      const productViewEl = document.getElementById('view-product');
+      const mount = document.getElementById('product-details-mount');
+      const breadcrumbActive = document.getElementById('product-breadcrumb-active');
+      const trayMount = document.getElementById('product-comparison-tray');
+
+      if (productViewEl) productViewEl.classList.remove('hidden');
+
+      selectedQuantity = 1;
+      const locality = (window.AppStore && window.AppStore.state.selectedLocality) || 'Garia Station';
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      // Skeleton Loader
+      if (mount) {
+        mount.innerHTML = `
+          <div class="card text-center" style="padding:60px;color:#64748b;">
+            <div style="font-size:36px;animation:pulse 1s infinite;">🌾</div>
+            <div style="font-size:16px;font-weight:700;margin-top:12px;">Loading verified rice specifications for ${escapeHtml(productId)}...</div>
+          </div>`;
+      }
+
+      if (!window.AppApi) return;
+
+      // Fetch Product Details via RPC
+      window.AppApi.call('getProductDetails', {
+        product_id: productId,
+        customer_locality: locality
+      })
+      .then(product => {
+        currentProductData = product;
+
+        if (breadcrumbActive) {
+          breadcrumbActive.textContent = product.name_en;
+        }
+
+        // 1. Render Main Product Layout
+        if (mount) {
+          mount.innerHTML = this.buildProductMarkup_(product, curr, locality);
+          this.bindProductActions_(product);
+        }
+
+        // 2. Mount Embedded Side-by-Side Comparison Tray (Section 16)
+        if (typeof window.renderComparisonMatrix === 'function') {
+          window.renderComparisonMatrix(product.variety, product.pack_size_kg, locality, 'product-comparison-tray');
+        }
+      })
+      .catch(err => {
+        if (mount) {
+          mount.innerHTML = `
+            <div class="card text-center" style="padding:40px;">
+              <div style="font-size:36px;margin-bottom:8px;">🌾</div>
+              <h2 style="color:var(--color-primary);margin-bottom:8px;">Rice Listing Unavailable</h2>
+              <p style="color:#64748b;font-size:14px;max-width:440px;margin:0 auto 16px auto;">
+                ${escapeHtml(err.error || 'This product listing may have been updated or moved by the merchant.')}
+              </p>
+              <a href="#/catalog" class="btn btn-primary">Browse Available Rice in Garia</a>
+            </div>`;
+        }
+      });
+    },
+
+    buildProductMarkup_(p, curr, locality) {
+      const heroImg = (p.images && p.images.length > 0)
+        ? p.images[0]
+        : 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80';
+
+      const est = p.delivery_estimate || {};
+      const delFee = est.delivery_fee_inr || 25;
+      const totalDelivered = p.price_inr + delFee;
+
+      const fssaiPill = p.seller.fssai_verified
+        ? `<span class="seller-fssai-pill">✓ FSSAI Verified: ${escapeHtml(p.seller.fssai_number || 'Registered')}</span>`
+        : `<span class="seller-fssai-pill" style="background-color:#f1f5f9;color:#64748b;">Local Licensed Merchant</span>`;
+
+      return `
+        <div class="product-main-grid">
+          
+          <!-- Column 1: Image Gallery -->
+          <div class="product-gallery-box">
+            <div class="gallery-hero-img-wrap">
+              <img id="main-product-img" src="${heroImg}" alt="${escapeHtml(p.name_en)}" class="gallery-hero-img">
+            </div>
+          </div>
+
+          <!-- Column 2: Product Specifications & Transparent Pricing -->
+          <div class="product-info-box">
+            
+            <div class="product-title-header">
+              <h1>${escapeHtml(p.name_en)}</h1>
+              ${p.name_bn ? `<div class="product-bengali-title">${escapeHtml(p.name_bn)}</div>` : ''}
+              
+              <div class="product-spec-badges-row">
+                <span class="badge" style="background-color:#e8f5e9;color:#1b4332;">Variety: ${escapeHtml(p.variety)}</span>
+                <span class="badge badge-status">Pack: ${p.pack_size_kg} kg</span>
+                <span class="badge badge-status">Grain: ${escapeHtml(p.grain_type)}</span>
+                <span class="badge badge-status">Origin: ${escapeHtml(p.origin)}</span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <p style="font-size:14px;color:#475569;line-height:1.6;margin:0;">
+              ${escapeHtml(p.description || 'Premium whole-grain Bengal rice. Thoroughly sorted, cleaned, and freshly packed.')}
+            </p>
+
+            <!-- Transparent Delivered Price Calculation Tray (Section 17 & 86) -->
+            <div class="transparent-price-card">
+              <div class="price-calculation-breakdown">
+                <div class="price-row-item">
+                  <span>Rice Price (${p.pack_size_kg} kg bag):</span>
+                  <span style="font-weight:700;color:var(--color-text-main);">${curr}${p.price_inr}</span>
+                </div>
+                <div class="price-row-item">
+                  <span>Transparent Delivery to ${escapeHtml(locality)}:</span>
+                  <span style="font-weight:700;color:var(--color-primary-light);">+ ${curr}${delFee}</span>
+                </div>
+              </div>
+
+              <div class="price-total-highlight">
+                <span class="total-delivered-label">Total Delivered Price:</span>
+                <span id="display-total-price" class="total-delivered-amount">${curr}${totalDelivered}</span>
+              </div>
+
+              <div class="delivery-distance-footnote">
+                📍 Delivered from <strong>${escapeHtml(p.seller.business_name)}</strong> in ${escapeHtml(p.seller.locality)} (~ ${est.approx_distance_km || 1.5} km approx. distance)
+              </div>
+            </div>
+
+            <!-- Quantity Stepper & Action Buttons -->
+            <div class="purchase-actions-box">
+              <div class="quantity-selector-row">
+                <span style="font-size:14px;font-weight:700;color:var(--color-text-main);">Quantity (Bags):</span>
+                <div class="quantity-stepper">
+                  <button type="button" id="qty-minus-btn" class="stepper-btn" aria-label="Decrease quantity">-</button>
+                  <span id="qty-val-display" class="stepper-val">1</span>
+                  <button type="button" id="qty-plus-btn" class="stepper-btn" aria-label="Increase quantity">+</button>
+                </div>
+              </div>
+
+              <div class="btn-actions-grid">
+                <button type="button" id="btn-add-basket" class="btn btn-outline" style="min-height:48px;font-size:15px;">
+                  + Add to Basket
+                </button>
+                <button type="button" id="btn-buy-now" class="btn btn-buy-now" style="min-height:48px;font-size:15px;">
+                  ⚡ Buy Now
+                </button>
+              </div>
+            </div>
+
+            <!-- Merchant Storefront Profile Card -->
+            <div class="seller-bio-card">
+              <div class="seller-bio-header">
+                <div>
+                  <div class="seller-shop-name">🏪 ${escapeHtml(p.seller.business_name)}</div>
+                  <div style="font-size:12px;color:#64748b;">${escapeHtml(p.seller.locality)}</div>
+                </div>
+                <span class="badge" style="background-color:#fef3c7;color:#92400e;">★ ${p.seller.rating_avg} Rating</span>
+              </div>
+              <div style="margin-top:4px;">
+                ${fssaiPill}
+              </div>
+            </div>
+
+            <!-- Viral Social Sharing Suite (Section 20) -->
+            <div class="social-share-bar">
+              <span class="share-label">Share Deal:</span>
+              <button type="button" id="btn-share-whatsapp" class="btn btn-sm btn-share-wa">
+                💬 WhatsApp
+              </button>
+              <button type="button" id="btn-share-native" class="btn btn-sm btn-share-native">
+                🔗 Share
+              </button>
+              <button type="button" id="btn-copy-link" class="btn btn-sm btn-secondary">
+                📋 Copy Link
+              </button>
+            </div>
+
+          </div>
+
+        </div>`;
+    },
+
+    bindProductActions_(p) {
+      const minusBtn = document.getElementById('qty-minus-btn');
+      const plusBtn = document.getElementById('qty-plus-btn');
+      const qtyDisplay = document.getElementById('qty-val-display');
+      const addBtn = document.getElementById('btn-add-basket');
+      const buyBtn = document.getElementById('btn-buy-now');
+      const waShareBtn = document.getElementById('btn-share-whatsapp');
+      const nativeShareBtn = document.getElementById('btn-share-native');
+      const copyLinkBtn = document.getElementById('btn-copy-link');
+
+      // Quantity controls
+      if (minusBtn && plusBtn && qtyDisplay) {
+        minusBtn.onclick = () => {
+          if (selectedQuantity > 1) {
+            selectedQuantity--;
+            qtyDisplay.textContent = selectedQuantity;
+          }
+        };
+        plusBtn.onclick = () => {
+          if (selectedQuantity < 10) {
+            selectedQuantity++;
+            qtyDisplay.textContent = selectedQuantity;
+          }
+        };
+      }
+
+      // Add to Basket
+      if (addBtn) {
+        addBtn.onclick = () => {
+          if (window.AppCart) {
+            window.AppCart.addItem(p, selectedQuantity);
+          }
+        };
+      }
+
+      // Buy Now (Single-seller checkout shortcut)
+      if (buyBtn) {
+        buyBtn.onclick = () => {
+          if (window.AppCart) {
+            window.AppCart.addItem(p, selectedQuantity);
+            window.AppRouter.navigate('/checkout');
+          }
+        };
+      }
+
+      // WhatsApp Viral Share (Section 20)
+      const shareUrl = `https://www.gariarice.in/#/product/${p.product_id}`;
+      const delFee = (p.delivery_estimate && p.delivery_estimate.delivery_fee_inr) || 25;
+      const totalDel = p.price_inr + delFee;
+
+      const waShareText =
+        `🌾 *Check this rice on Garia Rice Marketplace™:*\n` +
+        `*${p.pack_size_kg} kg ${p.name_en}*\n` +
+        `Rice Price: ₹${p.price_inr} + ₹${delFee} delivery\n` +
+        `*Total Delivered: ₹${totalDel}*\n` +
+        `Seller: ${p.seller.business_name} (${p.seller.locality})\n` +
+        `View product: ${shareUrl}`;
+
+      if (waShareBtn) {
+        waShareBtn.onclick = () => {
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(waShareText)}`, '_blank');
+        };
+      }
+
+      // Web Share API
+      if (nativeShareBtn) {
+        nativeShareBtn.onclick = () => {
+          if (navigator.share) {
+            navigator.share({
+              title: `${p.name_en} — Garia Rice Marketplace`,
+              text: waShareText,
+              url: shareUrl
+            }).catch(() => {});
+          } else {
+            // Fallback: trigger copy link
+            this.copyLinkToClipboard_(shareUrl);
+          }
+        };
+      }
+
+      // Copy Link Button
+      if (copyLinkBtn) {
+        copyLinkBtn.onclick = () => {
+          this.copyLinkToClipboard_(shareUrl);
+        };
+      }
+    },
+
+    copyLinkToClipboard_(url) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+          window.AppUI.showToast('Product link copied to clipboard!', 'success');
+        });
+      } else {
+        window.AppUI.showToast('Link: ' + url, 'info');
+      }
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.ProductViewController = ProductViewController;
+  ProductViewController.init();
+
+})(window);
+</script>
