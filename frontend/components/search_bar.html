@@ -1,0 +1,331 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - search_bar.html
+     Reusable Hyperlocal Search Bar with Bilingual Input & Pack Size Chips
+     ============================================================================== -->
+
+<div class="search-component-card" role="search" aria-label="Search and compare local rice prices">
+  <form id="global-search-form" class="search-form-wrap" onsubmit="return false;">
+    
+    <!-- Top Row: Query Input, Locality Picker & Compare CTA -->
+    <div class="search-inputs-row">
+      
+      <!-- 1. Bilingual Keyword Input -->
+      <div class="search-input-group keyword-group">
+        <span class="search-input-icon" aria-hidden="true">🔍</span>
+        <input 
+          type="search" 
+          id="search-query-input" 
+          class="search-text-input" 
+          placeholder="Search rice, brand or variety (Miniket / মিনিকেট, Gobindobhog)..." 
+          autocomplete="off"
+          aria-label="Search rice variety or brand"
+        >
+        <button type="button" id="search-clear-btn" class="search-clear-btn hidden" aria-label="Clear search input">&times;</button>
+      </div>
+
+      <!-- 2. Locality Picker -->
+      <div class="search-input-group locality-group">
+        <span class="search-input-icon" aria-hidden="true">📍</span>
+        <select id="search-locality-select" class="search-select-input" aria-label="Delivery locality in Garia">
+          <option value="Garia Station">Garia Station & Kanungo Park</option>
+          <option value="Baishnabghata Patuli">Baishnabghata & Patuli</option>
+          <option value="Mahamayatala">Mahamayatala & Garia Main Rd</option>
+          <option value="Naktala">Naktala & Bansdroni Border</option>
+          <option value="Kamalgazi">Kamalgazi & Narendrapur</option>
+          <option value="Boral">Boral & Rajpur Border</option>
+        </select>
+      </div>
+
+      <!-- 3. Primary CTA Button -->
+      <button type="button" id="search-submit-btn" class="btn btn-primary search-submit-btn">
+        <span class="btn-icon" aria-hidden="true">⚖️</span> COMPARE PRICES
+      </button>
+
+    </div>
+
+    <!-- Bottom Row: Pack Size Filter Chips (2kg to 50kg) -->
+    <div class="search-chips-row">
+      <span class="chips-label">Pack Size:</span>
+      <div class="pack-chips-scroll" role="radiogroup" aria-label="Select rice pack weight">
+        <button type="button" class="chip-btn active" data-pack="" role="radio" aria-checked="true">All Sizes</button>
+        <button type="button" class="chip-btn" data-pack="2" role="radio" aria-checked="false">2 kg (Specialty)</button>
+        <button type="button" class="chip-btn" data-pack="5" role="radio" aria-checked="false">5 kg</button>
+        <button type="button" class="chip-btn" data-pack="10" role="radio" aria-checked="false">10 kg</button>
+        <button type="button" class="chip-btn" data-pack="25" role="radio" aria-checked="false">25 kg (Daily Bag)</button>
+        <button type="button" class="chip-btn" data-pack="26" role="radio" aria-checked="false">26 kg</button>
+        <button type="button" class="chip-btn" data-pack="50" role="radio" aria-checked="false">50 kg (Bulk)</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<!-- ==============================================================================
+     SEARCH BAR COMPONENT INLINE STYLES
+     ============================================================================== -->
+<style>
+.search-component-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.search-form-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Inputs Row */
+.search-inputs-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .search-inputs-row {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.search-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all 0.15s ease;
+}
+
+.search-input-group:focus-within {
+  border-color: var(--color-primary-light);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+}
+
+.keyword-group {
+  flex: 1 1 50%;
+}
+
+.locality-group {
+  flex: 1 1 30%;
+}
+
+.search-input-icon {
+  padding-left: 14px;
+  font-size: 15px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.search-text-input {
+  width: 100%;
+  min-height: var(--min-touch-target);
+  padding: 10px 36px 10px 10px;
+  font-size: 15px;
+  color: var(--color-text-main);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.search-clear-btn:hover { color: #475569; }
+
+.search-select-input {
+  width: 100%;
+  min-height: var(--min-touch-target);
+  padding: 10px 14px 10px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.search-submit-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-icon {
+  margin-right: 6px;
+  font-size: 16px;
+}
+
+/* Pack Size Chips Row */
+.search-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.chips-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.pack-chips-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 6px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.pack-chips-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.pack-chips-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.chip-btn {
+  white-space: nowrap;
+  min-height: 36px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background-color: #f8fafc;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.chip-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.chip-btn.active {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+</style>
+
+<!-- ==============================================================================
+     SEARCH BAR COMPONENT CONTROLLER
+     ============================================================================== -->
+<script>
+(function() {
+  function initSearchBar() {
+    const queryInput = document.getElementById('search-query-input');
+    const localitySelect = document.getElementById('search-locality-select');
+    const submitBtn = document.getElementById('search-submit-btn');
+    const clearBtn = document.getElementById('search-clear-btn');
+    const chipBtns = document.querySelectorAll('.pack-chips-scroll .chip-btn');
+
+    let selectedPackSize = '';
+
+    // 1. Sync Locality with Global AppStore
+    if (localitySelect && window.AppStore) {
+      localitySelect.value = window.AppStore.state.selectedLocality || 'Garia Station';
+    }
+
+    // 2. Chip Filter Toggle
+    chipBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        chipBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-checked', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-checked', 'true');
+        selectedPackSize = btn.getAttribute('data-pack') || '';
+      });
+    });
+
+    // 3. Clear Button Toggle
+    if (queryInput && clearBtn) {
+      queryInput.addEventListener('input', () => {
+        if (queryInput.value.trim().length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      });
+
+      clearBtn.addEventListener('click', () => {
+        queryInput.value = '';
+        clearBtn.classList.add('hidden');
+        queryInput.focus();
+      });
+    }
+
+    // 4. Form Submission & SPA Navigation
+    function executeSearch() {
+      const query = queryInput ? queryInput.value.trim() : '';
+      const locality = localitySelect ? localitySelect.value : 'Garia Station';
+
+      // Update global locality if modified here
+      if (window.AppStore && locality !== window.AppStore.state.selectedLocality) {
+        window.AppStore.setLocality(locality);
+      }
+
+      // Build target hash URL for catalog
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (selectedPackSize) params.set('pack_size', selectedPackSize);
+      if (locality) params.set('locality', locality);
+
+      const queryString = params.toString();
+      const targetHash = '/catalog' + (queryString ? '?' + queryString : '');
+
+      if (window.AppRouter) {
+        window.AppRouter.navigate(targetHash);
+      } else {
+        window.location.hash = '#' + targetHash;
+      }
+    }
+
+    if (submitBtn) submitBtn.addEventListener('click', executeSearch);
+
+    if (queryInput) {
+      queryInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          executeSearch();
+        }
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSearchBar);
+  } else {
+    initSearchBar();
+  }
+})();
+</script>
