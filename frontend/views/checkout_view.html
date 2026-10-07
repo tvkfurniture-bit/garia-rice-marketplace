@@ -1,0 +1,786 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - checkout_view.html
+     Master Single-Seller Cart, Transparent Checkout & Order Placer (Sections 17, 36, 86)
+     ============================================================================== -->
+
+<div class="checkout-view-container">
+
+  <!-- ============================================================================
+       MODE A: ACTIVE CHECKOUT VIEW (Cart Review, Address & Payment)
+       ============================================================================ -->
+  <div id="checkout-active-panel" class="checkout-panel">
+    
+    <div class="checkout-view-header">
+      <h1 class="checkout-main-title">Shopping Basket & Checkout</h1>
+      <p class="checkout-sub-title">Review your rice order, confirm delivery address, and place order.</p>
+    </div>
+
+    <!-- Empty Cart Fallback -->
+    <div id="checkout-empty-state" class="card text-center hidden" style="padding:48px 20px;">
+      <div style="font-size:42px;margin-bottom:12px;">🛒</div>
+      <h2 style="color:var(--color-primary);margin-bottom:8px;">Your Shopping Basket is Empty</h2>
+      <p style="color:#64748b;font-size:14px;max-width:440px;margin:0 auto 20px auto;">
+        You haven't added any rice bags to your basket yet. Compare prices from local Garia sellers to find the best deal.
+      </p>
+      <a href="#/catalog" class="btn btn-primary">Browse Rice Varieties</a>
+    </div>
+
+    <!-- Active Cart & Checkout Form Grid -->
+    <div id="checkout-content-grid" class="checkout-layout-grid">
+      
+      <!-- Left Column: Cart Items & Delivery Address -->
+      <div class="checkout-left-col">
+        
+        <!-- 1. Single-Seller Basket Card -->
+        <div class="card checkout-card">
+          <div class="seller-basket-header">
+            <div>
+              <span class="basket-badge">Fulfilling Merchant</span>
+              <h2 id="checkout-seller-title" class="seller-basket-name">Local Merchant</h2>
+            </div>
+            <button type="button" id="btn-clear-basket" class="btn-clear-cart" aria-label="Clear basket">Clear Basket</button>
+          </div>
+
+          <div id="checkout-items-list" class="checkout-items-list">
+            <!-- Populated dynamically by CheckoutViewController -->
+          </div>
+        </div>
+
+        <!-- 2. Delivery Address & Contact Form -->
+        <div class="card checkout-card" style="margin-top:20px;">
+          <h2 class="form-section-title">📍 Delivery Address in Garia</h2>
+          
+          <form id="checkout-address-form" onsubmit="return false;">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="checkout-name-input">Full Name *</label>
+                <input type="text" id="checkout-name-input" class="form-input" placeholder="e.g. Sourav Mukherjee" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="checkout-phone-input">Mobile Number (+91) *</label>
+                <input type="tel" id="checkout-phone-input" class="form-input" placeholder="e.g. 9830012345" maxlength="10" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="checkout-address-input">Street Address / Flat No / Building *</label>
+              <input type="text" id="checkout-address-input" class="form-input" placeholder="e.g. Flat 3B, Kanungo Park, Baroda Avenue" required>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="checkout-landmark-input">Landmark (Optional)</label>
+                <input type="text" id="checkout-landmark-input" class="form-input" placeholder="e.g. Near Kavi Nazrul Metro">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="checkout-pincode-input">PIN Code *</label>
+                <input type="text" id="checkout-pincode-input" class="form-input" placeholder="e.g. 700084" maxlength="6" value="700084" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="checkout-locality-input">Garia Delivery Locality *</label>
+              <select id="checkout-locality-input" class="form-select" required>
+                <option value="Garia Station">Garia Station & Kanungo Park</option>
+                <option value="Baishnabghata Patuli">Baishnabghata & Patuli</option>
+                <option value="Mahamayatala">Mahamayatala & Garia Main Rd</option>
+                <option value="Naktala">Naktala & Bansdroni Border</option>
+                <option value="Kamalgazi">Kamalgazi & Narendrapur</option>
+                <option value="Boral">Boral & Rajpur Border</option>
+              </select>
+            </div>
+          </form>
+        </div>
+
+        <!-- 3. Payment Method Selection (Section 37) -->
+        <div class="card checkout-card" style="margin-top:20px;">
+          <h2 class="form-section-title">💵 Payment Method</h2>
+          <p style="font-size:13px;color:#64748b;margin-bottom:12px;">Payment is collected safely at doorstep upon delivery.</p>
+
+          <div class="payment-options-group">
+            <label class="payment-radio-card active">
+              <input type="radio" name="payment_method" value="COD" checked class="payment-radio">
+              <div>
+                <div class="payment-card-title">Cash on Delivery (COD)</div>
+                <div class="payment-card-desc">Pay cash directly to the delivery partner upon arrival.</div>
+              </div>
+            </label>
+
+            <label class="payment-radio-card" style="margin-top:10px;">
+              <input type="radio" name="payment_method" value="UPI_ON_DELIVERY" class="payment-radio">
+              <div>
+                <div class="payment-card-title">UPI on Delivery</div>
+                <div class="payment-card-desc">Scan delivery partner's UPI QR code (GPay, PhonePe, Paytm).</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Transparent Pricing & Place Order Button -->
+      <div class="checkout-right-col">
+        <div class="card checkout-summary-card">
+          <h2 class="summary-card-title">Order Total & Delivery</h2>
+
+          <!-- Live Server-Recalculated Price Breakdown (Sections 17 & 86) -->
+          <div id="checkout-price-breakdown-mount" class="price-breakdown-box">
+            <div style="text-align:center;padding:20px;color:#64748b;">Calculating delivery fee...</div>
+          </div>
+
+          <div class="summary-disclaimer">
+            🛡️ <strong>Fair Local Pricing:</strong> Zero hidden surge fees. The delivery fee is paid directly to local couriers carrying heavy rice bags to your door.
+          </div>
+
+          <button type="button" id="btn-place-order" class="btn btn-primary btn-block btn-place-order">
+            CONFIRM & PLACE ORDER
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ============================================================================
+       MODE B: POST-ORDER CONFIRMATION & LIVE TRACKING PANEL
+       ============================================================================ -->
+  <div id="checkout-success-panel" class="checkout-panel hidden">
+    <div class="order-placed-success-banner">
+      <div class="success-icon">✓</div>
+      <h1 class="success-title">Order Placed Successfully!</h1>
+      <p class="success-subtitle">The seller has been notified to pack your rice. Follow your live delivery milestone status below:</p>
+    </div>
+
+    <!-- Mount Live Order Progress Tracker Component (File 30) -->
+    <div id="post-order-tracker-mount">
+      <?!= include('order_tracker') ?>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==============================================================================
+     CHECKOUT VIEW INLINE STYLES
+     ============================================================================== -->
+<style>
+.checkout-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.checkout-view-header {
+  margin-bottom: 8px;
+}
+
+.checkout-main-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.checkout-sub-title {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* 2-Column Grid */
+.checkout-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .checkout-layout-grid {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+.checkout-card {
+  padding: 20px;
+}
+
+/* Basket Items */
+.seller-basket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 16px;
+}
+
+.basket-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.seller-basket-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 2px 0 0 0;
+}
+
+.btn-clear-cart {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-clear-cart:hover { text-decoration: underline; }
+
+.checkout-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checkout-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.item-info-col h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.item-meta-sub {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.item-actions-col {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.item-line-price {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary);
+  text-align: right;
+  min-width: 70px;
+}
+
+.btn-remove-item {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+}
+.btn-remove-item:hover { color: var(--color-danger); }
+
+/* Form Sections */
+.form-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .form-row-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Payment Radio Cards */
+.payment-radio-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.payment-radio-card:hover {
+  background-color: #f8fafc;
+}
+
+.payment-radio {
+  margin-top: 3px;
+  accent-color: var(--color-primary-light);
+  width: 18px;
+  height: 18px;
+}
+
+.payment-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.payment-card-desc {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Right Summary Card */
+.checkout-summary-card {
+  position: sticky;
+  top: 80px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summary-card-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.price-breakdown-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.summary-price-line {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+}
+
+.summary-price-line.total-line {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 2px solid var(--color-border);
+  color: var(--color-primary);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.summary-disclaimer {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+  background-color: #f8fafc;
+  padding: 10px;
+  border-radius: var(--radius-md);
+}
+
+.btn-place-order {
+  min-height: 50px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* Success Banner */
+.order-placed-success-banner {
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-lg);
+  padding: 32px 20px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.success-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background-color: var(--color-success);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 14px auto;
+}
+
+.success-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #065f46;
+  margin: 0 0 6px 0;
+}
+
+.success-subtitle {
+  font-size: 14px;
+  color: #047857;
+  max-width: 540px;
+  margin: 0 auto;
+}
+</style>
+
+<!-- ==============================================================================
+     CHECKOUT VIEW CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  let activeBreakdownData = null;
+
+  const CheckoutViewController = {
+    init() {
+      if (window.AppRouter) {
+        const handler = () => this.render();
+        window.AppRouter.register('checkout', handler);
+        window.AppRouter.register('cart', handler);
+      }
+
+      this.bindCheckoutEvents_();
+    },
+
+    render() {
+      const checkoutViewEl = document.getElementById('view-checkout');
+      const activePanel = document.getElementById('checkout-active-panel');
+      const successPanel = document.getElementById('checkout-success-panel');
+
+      if (checkoutViewEl) checkoutViewEl.classList.remove('hidden');
+      if (activePanel) activePanel.classList.remove('hidden');
+      if (successPanel) successPanel.classList.add('hidden');
+
+      this.renderCartItems_();
+      this.rehydrateCustomerDetails_();
+      this.recalculatePricing_();
+    },
+
+    renderCartItems_() {
+      const cart = window.AppStore ? window.AppStore.state.cart : { items: [] };
+      const emptyStateEl = document.getElementById('checkout-empty-state');
+      const contentGridEl = document.getElementById('checkout-content-grid');
+      const sellerTitleEl = document.getElementById('checkout-seller-title');
+      const listMount = document.getElementById('checkout-items-list');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!cart || !cart.items || cart.items.length === 0) {
+        if (emptyStateEl) emptyStateEl.classList.remove('hidden');
+        if (contentGridEl) contentGridEl.classList.add('hidden');
+        return;
+      }
+
+      if (emptyStateEl) emptyStateEl.classList.add('hidden');
+      if (contentGridEl) contentGridEl.classList.remove('hidden');
+      if (sellerTitleEl) sellerTitleEl.textContent = cart.seller_name || 'Local Garia Merchant';
+
+      if (!listMount) return;
+
+      let itemsHtml = '';
+      cart.items.forEach(item => {
+        const lineTotal = item.unit_price_inr * item.quantity;
+        itemsHtml += `
+          <div class="checkout-item-row">
+            <div class="item-info-col">
+              <h3>${escapeHtml(item.name)}</h3>
+              <div class="item-meta-sub">
+                Pack: <strong>${item.pack_size_kg} kg</strong> | ${curr}${item.unit_price_inr} per bag
+              </div>
+            </div>
+
+            <div class="item-actions-col">
+              <div class="quantity-stepper" style="border-radius:4px;">
+                <button type="button" class="stepper-btn btn-cart-minus" data-id="${item.product_id}">-</button>
+                <span class="stepper-val" style="font-size:14px;width:32px;">${item.quantity}</span>
+                <button type="button" class="stepper-btn btn-cart-plus" data-id="${item.product_id}">+</button>
+              </div>
+
+              <div class="item-line-price">${curr}${lineTotal}</div>
+              <button type="button" class="btn-remove-item" data-id="${item.product_id}" title="Remove item">&times;</button>
+            </div>
+          </div>`;
+      });
+
+      listMount.innerHTML = itemsHtml;
+
+      // Bind quantity modifications
+      listMount.querySelectorAll('.btn-cart-minus').forEach(btn => {
+        btn.onclick = (e) => {
+          const pid = e.currentTarget.getAttribute('data-id');
+          if (window.AppCart) {
+            window.AppCart.updateQuantity(pid, -1);
+            this.render();
+          }
+        };
+      });
+
+      listMount.querySelectorAll('.btn-cart-plus').forEach(btn => {
+        btn.onclick = (e) => {
+          const pid = e.currentTarget.getAttribute('data-id');
+          if (window.AppCart) {
+            window.AppCart.updateQuantity(pid, 1);
+            this.render();
+          }
+        };
+      });
+
+      listMount.querySelectorAll('.btn-remove-item').forEach(btn => {
+        btn.onclick = (e) => {
+          const pid = e.currentTarget.getAttribute('data-id');
+          if (window.AppCart) {
+            window.AppCart.removeItem(pid);
+            this.render();
+          }
+        };
+      });
+    },
+
+    rehydrateCustomerDetails_() {
+      const user = window.AppStore ? window.AppStore.state.currentUser : null;
+      const locality = window.AppStore ? window.AppStore.state.selectedLocality : 'Garia Station';
+      const localityInput = document.getElementById('checkout-locality-input');
+      const phoneInput = document.getElementById('checkout-phone-input');
+
+      if (localityInput) localityInput.value = locality;
+      if (user && phoneInput && !phoneInput.value) {
+        phoneInput.value = user.phone || '';
+      }
+
+      // Fetch saved address from CustomerService if token exists
+      if (window.AppStore && window.AppStore.state.authToken && window.AppApi) {
+        window.AppApi.call('getCustomerProfile')
+          .then(profile => {
+            if (profile && profile.saved_addresses && profile.saved_addresses.length > 0) {
+              const def = profile.saved_addresses.find(a => a.is_default) || profile.saved_addresses[0];
+              const addrInput = document.getElementById('checkout-address-input');
+              const landmarkInput = document.getElementById('checkout-landmark-input');
+              const pinInput = document.getElementById('checkout-pincode-input');
+              const nameInput = document.getElementById('checkout-name-input');
+
+              if (addrInput && !addrInput.value) addrInput.value = def.address_line || '';
+              if (landmarkInput && !landmarkInput.value) landmarkInput.value = def.landmark || '';
+              if (pinInput && !pinInput.value) pinInput.value = def.pincode || '700084';
+              if (nameInput && !nameInput.value) nameInput.value = profile.full_name || '';
+              if (localityInput && def.locality) localityInput.value = def.locality;
+            }
+          })
+          .catch(() => {});
+      }
+    },
+
+    recalculatePricing_() {
+      const cart = window.AppStore ? window.AppStore.state.cart : null;
+      const mount = document.getElementById('checkout-price-breakdown-mount');
+      const localityInput = document.getElementById('checkout-locality-input');
+      const locality = localityInput ? localityInput.value : 'Garia Station';
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!cart || !cart.items || cart.items.length === 0 || !mount) return;
+
+      mount.innerHTML = `<div style="text-align:center;padding:14px;color:#64748b;">Calculating verified delivery charge...</div>`;
+
+      window.AppApi.call('getPricingBreakdown', {
+        items: cart.items.map(i => ({ product_id: i.product_id, quantity: i.quantity })),
+        seller_id: cart.seller_id,
+        delivery_address: { locality: locality }
+      })
+      .then(breakdown => {
+        activeBreakdownData = breakdown;
+        const b = breakdown.delivery_fee_breakdown || {};
+        const surchargeText = b.isWeightSurchargeApplied
+          ? `<div style="font-size:11px;color:#b45309;">(Includes heavy load fee: ${curr}${b.weightSurcharge})</div>`
+          : '';
+
+        mount.innerHTML = `
+          <div class="summary-price-line">
+            <span>Rice Subtotal (${breakdown.total_weight_kg} kg):</span>
+            <span style="font-weight:700;color:var(--color-text-main);">${curr}${breakdown.subtotal_inr}</span>
+          </div>
+
+          <div class="summary-price-line">
+            <div>
+              <span>Delivery Charge to ${escapeHtml(locality)}:</span>
+              ${surchargeText}
+            </div>
+            <span style="font-weight:700;color:var(--color-primary-light);">+ ${curr}${breakdown.delivery_fee_inr}</span>
+          </div>
+
+          <div class="summary-price-line total-line">
+            <span>Total Payable:</span>
+            <span>${curr}${breakdown.total_amount_inr}</span>
+          </div>
+
+          <div style="font-size:11px;color:#64748b;margin-top:4px;">
+            📍 ~ ${breakdown.approx_distance_km} km approx. distance from <strong>${escapeHtml(breakdown.seller_business_name)}</strong>
+          </div>`;
+      })
+      .catch(err => {
+        mount.innerHTML = `
+          <div style="color:var(--color-danger);font-size:13px;">
+            Pricing calculation issue: ${escapeHtml(err.error || 'Server error')}
+          </div>`;
+      });
+    },
+
+    bindCheckoutEvents_() {
+      const clearBtn = document.getElementById('btn-clear-basket');
+      const localityInput = document.getElementById('checkout-locality-input');
+      const placeOrderBtn = document.getElementById('btn-place-order');
+
+      // Clear basket
+      if (clearBtn) {
+        clearBtn.onclick = () => {
+          if (window.AppCart) {
+            window.AppCart.clear();
+            this.render();
+          }
+        };
+      }
+
+      // Locality change triggers live price recalculation
+      if (localityInput) {
+        localityInput.onchange = () => {
+          this.recalculatePricing_();
+        };
+      }
+
+      // Place order submission
+      if (placeOrderBtn) {
+        placeOrderBtn.onclick = () => this.submitOrder_();
+      }
+    },
+
+    submitOrder_() {
+      const cart = window.AppStore ? window.AppStore.state.cart : null;
+      if (!cart || !cart.items || cart.items.length === 0) {
+        window.AppUI.showToast('Your basket is empty.', 'error');
+        return;
+      }
+
+      const nameInput = document.getElementById('checkout-name-input');
+      const phoneInput = document.getElementById('checkout-phone-input');
+      const addrInput = document.getElementById('checkout-address-input');
+      const landmarkInput = document.getElementById('checkout-landmark-input');
+      const pinInput = document.getElementById('checkout-pincode-input');
+      const localityInput = document.getElementById('checkout-locality-input');
+      const placeOrderBtn = document.getElementById('btn-place-order');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const phone = phoneInput ? phoneInput.value.trim() : '';
+      const address = addrInput ? addrInput.value.trim() : '';
+      const landmark = landmarkInput ? landmarkInput.value.trim() : '';
+      const pincode = pinInput ? pinInput.value.trim() : '';
+      const locality = localityInput ? localityInput.value : 'Garia Station';
+      const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'COD';
+
+      // Validation
+      if (!name || !address) {
+        window.AppUI.showToast('Please enter your full name and street delivery address.', 'error');
+        return;
+      }
+      if (phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
+        window.AppUI.showToast('Please enter a valid 10-digit Indian mobile number.', 'error');
+        return;
+      }
+      if (pincode.length !== 6 || !/^[1-9]\d{5}$/.test(pincode)) {
+        window.AppUI.showToast('Please enter a valid 6-digit postal PIN code in Garia/Kolkata.', 'error');
+        return;
+      }
+
+      // Prepare order submission
+      const orderPayload = {
+        seller_id: cart.seller_id,
+        items: cart.items.map(i => ({ product_id: i.product_id, quantity: i.quantity })),
+        delivery_address: {
+          full_name: name,
+          primary_phone: phone,
+          address_line: address,
+          landmark: landmark,
+          locality: locality,
+          pincode: pincode
+        },
+        payment_method: paymentMethod
+      };
+
+      // Disable button to prevent double-click race conditions
+      if (placeOrderBtn) {
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.textContent = 'PLACING ORDER...';
+      }
+
+      window.AppUI.showLoader('Securing Order', 'Recalculating totals & notifying seller...');
+
+      // Authenticate user session if token is absent
+      const authPromise = (!window.AppStore.state.authToken)
+        ? window.AppApi.call('authenticateUser', { phone: phone, role: 'CUSTOMER' })
+            .then(authRes => {
+              window.AppStore.setAuth(authRes.token, authRes.user);
+              return authRes;
+            })
+        : Promise.resolve();
+
+      authPromise
+        .then(() => window.AppApi.call('createOrder', orderPayload))
+        .then(orderRes => {
+          window.AppUI.showToast('Order placed successfully!', 'success');
+
+          // Clear cart
+          if (window.AppCart) {
+            window.AppCart.clear();
+          }
+
+          // Unhide Success Mode and mount live Order Tracker (File 30)
+          const activePanel = document.getElementById('checkout-active-panel');
+          const successPanel = document.getElementById('checkout-success-panel');
+          if (activePanel) activePanel.classList.add('hidden');
+          if (successPanel) successPanel.classList.remove('hidden');
+
+          if (typeof window.renderOrderTracker === 'function') {
+            window.renderOrderTracker(orderRes.order_id, 'post-order-tracker-mount');
+          }
+        })
+        .catch(err => {
+          window.AppUI.showToast(err.error || 'Failed to place order. Please retry.', 'error');
+          if (placeOrderBtn) {
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.textContent = 'CONFIRM & PLACE ORDER';
+          }
+        })
+        .finally(() => window.AppUI.hideLoader());
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.CheckoutViewController = CheckoutViewController;
+  CheckoutViewController.init();
+
+})(window);
+</script>
