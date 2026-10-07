@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  
+  <title><?= appName ?> — Compare Rice Prices from Local Garia Sellers</title>
+  
+  <!-- Mobile Browser Chrome & Theme Styling -->
+  <meta name="theme-color" content="#1b4332">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Garia Rice">
+  
+  <!-- SEO & Hyperlocal Meta Tags -->
+  <meta name="description" content="Compare rice varieties, pack sizes (2kg to 50kg), and delivery fees across verified local sellers in Garia, Kolkata. Miniket, Gobindobhog, Ratna, and Banskathi delivered to your doorstep.">
+  <meta name="keywords" content="Garia Rice, Kolkata Rice Marketplace, Miniket Rice 25kg, Gobindobhog Rice, Patuli Rice, Garia Station Rice Bazar, Bengal Rice Delivery">
+  
+  <!-- Social Media & WhatsApp Open Graph Metadata -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<?= appName ?>">
+  <meta property="og:title" content="<?= appName ?> — <?= appTagline ?>">
+  <meta property="og:description" content="Find rice from the nearest local seller. Compare prices, transparent delivery fees, and order directly.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=1200&q=80">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Favicon (Data URI Rice Sheaf Icon) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%2232%22%20height=%2232%22><text y=%2226%22 font-size=%2224%22>🌾</text></svg>">
+
+  <!-- Core Responsive Stylesheet (File 24) -->
+  <?!= include('styles') ?>
+</head>
+<body class="app-body">
+
+  <!-- Global Fullscreen Progress Loader -->
+  <div id="global-loader" class="global-loader" aria-live="polite" aria-label="Loading marketplace">
+    <div class="loader-content">
+      <div class="rice-spinner">🌾</div>
+      <div class="loader-text"><?= appName ?></div>
+      <div class="loader-sub">Finding nearest sellers in Garia...</div>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification Container (Floating) -->
+  <div id="toast-container" class="toast-container" aria-live="assertive" role="region"></div>
+
+  <!-- Accessible Modal Dialog Container -->
+  <div id="app-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Notice</h3>
+        <button id="modal-close-btn" class="modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+      <div id="modal-footer" class="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- Master Layout Header (File 26) -->
+  <header class="app-header-mount">
+    <?!= include('header') ?>
+  </header>
+
+  <!-- Master SPA Dynamic Viewport Mount -->
+  <main id="app-root" class="app-root-container">
+    
+    <!-- Modular Views (Conditionally rendered by Client Router) -->
+    <div id="view-home" class="spa-view hidden">
+      <?!= include('home_view') ?>
+    </div>
+
+    <div id="view-catalog" class="spa-view hidden">
+      <?!= include('catalog_view') ?>
+    </div>
+
+    <div id="view-product" class="spa-view hidden">
+      <?!= include('product_view') ?>
+    </div>
+
+    <div id="view-checkout" class="spa-view hidden">
+      <?!= include('checkout_view') ?>
+    </div>
+
+    <div id="view-seller" class="spa-view hidden">
+      <?!= include('seller_view') ?>
+    </div>
+
+    <div id="view-rider" class="spa-view hidden">
+      <?!= include('rider_view') ?>
+    </div>
+
+    <div id="view-admin" class="spa-view hidden">
+      <?!= include('admin_view') ?>
+    </div>
+
+    <div id="view-static" class="spa-view hidden">
+      <?!= include('static_views') ?>
+    </div>
+
+  </main>
+
+  <!-- Master Layout Footer (File 27) -->
+  <footer class="app-footer-mount">
+    <?!= include('footer') ?>
+  </footer>
+
+  <!-- Server-to-Client State Bootstrapper -->
+  <script>
+    window.__INITIAL_SERVER_STATE__ = {
+      initialRoute: "<?= activeRoute ?>",
+      appName: "<?= appName ?>",
+      appTagline: "<?= appTagline ?>",
+      currencySymbol: "<?= currencySymbol ?>",
+      supportPhone: "<?= supportPhone ?>",
+      supportEmail: "<?= supportEmail ?>"
+    };
+  </script>
+
+  <!-- Core Client JavaScript State Machine & Router (File 25) -->
+  <?!= include('js_core') ?>
+
+</body>
+</html>
