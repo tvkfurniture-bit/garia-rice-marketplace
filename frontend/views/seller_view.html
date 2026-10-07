@@ -1,0 +1,826 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - seller_view.html
+     Master Seller Portal & Merchant Dashboard (Sections 26, 28, 29 Compliance)
+     ============================================================================== -->
+
+<div class="seller-view-container">
+
+  <!-- ============================================================================
+       MODE A: MERCHANT LOGIN GATING (If Unauthenticated)
+       ============================================================================ -->
+  <div id="seller-login-panel" class="seller-login-card card text-center hidden">
+    <div style="font-size:36px;margin-bottom:8px;">🏪</div>
+    <h1 style="color:var(--color-primary);font-size:22px;margin-bottom:6px;">Seller Portal Login</h1>
+    <p style="color:#64748b;font-size:14px;max-width:440px;margin:0 auto 20px auto;">
+      Enter your registered merchant mobile number to manage incoming rice orders, update stock, and adjust pricing.
+    </p>
+
+    <div style="max-width:320px;margin:0 auto 16px auto;">
+      <div class="form-group text-left">
+        <label class="form-label" for="seller-login-phone">Registered Mobile Number (+91) *</label>
+        <input type="tel" id="seller-login-phone" class="form-input text-center" placeholder="e.g. 9830011111" maxlength="10">
+      </div>
+      <button type="button" id="btn-seller-login" class="btn btn-primary btn-block">
+        Access Seller Dashboard
+      </button>
+    </div>
+
+    <p style="font-size:13px;color:#64748b;margin:0;">
+      Not yet registered? <a href="#/become-a-seller" style="color:var(--color-primary-light);font-weight:700;">Apply to Sell on Garia Rice</a>
+    </p>
+  </div>
+
+  <!-- ============================================================================
+       MODE B: ACTIVE SELLER DASHBOARD (When Authenticated)
+       ============================================================================ -->
+  <div id="seller-dashboard-panel" class="seller-dashboard-panel hidden">
+
+    <!-- Top Merchant Status Header -->
+    <div class="card seller-profile-bar">
+      <div class="seller-bar-info">
+        <div class="flex items-center gap-2">
+          <span style="font-size:24px;">🏪</span>
+          <div>
+            <h1 id="seller-name-display" class="seller-dash-title">Shop Name</h1>
+            <div id="seller-meta-display" class="seller-dash-sub">Garia, Kolkata | Rating: ★ 4.8</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="seller-bar-actions">
+        <!-- Daily Store Availability Toggle -->
+        <div class="store-toggle-box">
+          <span id="store-status-label" class="store-status-text">Store: OPEN</span>
+          <button type="button" id="btn-toggle-store" class="btn btn-sm btn-outline">Toggle Status</button>
+        </div>
+        <button type="button" id="btn-seller-logout" class="btn btn-sm btn-secondary">Logout</button>
+      </div>
+    </div>
+
+    <!-- 6-Metric KPI Grid (Section 26) -->
+    <div class="seller-kpis-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Awaiting Confirmation</div>
+        <div id="kpi-pending-orders" class="kpi-value text-warning">0</div>
+        <div class="kpi-sub">New orders placed</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Ready for Pickup</div>
+        <div id="kpi-ready-orders" class="kpi-value" style="color:#0369a1;">0</div>
+        <div class="kpi-sub">Awaiting rider arrival</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Out for Delivery</div>
+        <div id="kpi-transit-orders" class="kpi-value" style="color:#7c3aed;">0</div>
+        <div class="kpi-sub">En route to customers</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Completed Orders</div>
+        <div id="kpi-completed-orders" class="kpi-value text-success">0</div>
+        <div class="kpi-sub">Delivered successfully</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Total Gross Sales</div>
+        <div id="kpi-gross-sales" class="kpi-value">₹0</div>
+        <div class="kpi-sub">Total rice volume sold</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Net Seller Payout</div>
+        <div id="kpi-net-payout" class="kpi-value text-primary">₹0</div>
+        <div class="kpi-sub">After platform commission</div>
+      </div>
+    </div>
+
+    <!-- Incoming Actionable Orders Section (Sections 28 & 29) -->
+    <section class="seller-section-card card">
+      <div class="seller-section-header">
+        <div>
+          <h2 class="seller-section-title">🔔 Incoming Orders & Fulfillment</h2>
+          <p class="seller-section-sub">Acknowledge new orders promptly and mark ready once packed to trigger courier dispatch.</p>
+        </div>
+      </div>
+
+      <div id="seller-orders-mount" class="seller-orders-mount">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- Product Catalog & Inventory Management Tray (Section 26) -->
+    <section class="seller-section-card card">
+      <div class="seller-section-header flex items-center justify-between" style="flex-wrap:wrap;gap:10px;">
+        <div>
+          <h2 class="seller-section-title">🌾 Manage Rice Catalog & Prices</h2>
+          <p class="seller-section-sub">Adjust your bag prices or toggle availability in real-time.</p>
+        </div>
+        <button type="button" id="btn-open-add-product" class="btn btn-primary btn-sm">
+          + Add New Rice Listing
+        </button>
+      </div>
+
+      <div id="seller-catalog-mount" class="seller-catalog-mount">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+<!-- ==============================================================================
+     SELLER VIEW INLINE STYLES
+     ============================================================================== -->
+<style>
+.seller-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Login Card */
+.seller-login-card {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 40px 24px;
+}
+
+/* Profile Bar */
+.seller-profile-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  gap: 16px;
+}
+
+.seller-dash-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.seller-dash-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.seller-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.store-toggle-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+}
+
+.store-status-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+/* 6-Card KPI Grid */
+.seller-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .seller-kpis-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .seller-kpis-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.kpi-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 14px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-value {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--color-text-main);
+  line-height: 1.1;
+}
+
+.kpi-value.text-primary { color: var(--color-primary); }
+.kpi-value.text-success { color: var(--color-success); }
+.kpi-value.text-warning { color: var(--color-warning); }
+
+.kpi-sub {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Section Cards */
+.seller-section-card {
+  padding: 24px;
+}
+
+.seller-section-header {
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.seller-section-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.seller-section-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* Order Rows in Seller Portal */
+.seller-order-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.seller-order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seller-order-details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+@media (min-width: 600px) {
+  .seller-order-details-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.seller-action-buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-confirm-order {
+  background-color: var(--color-success);
+  color: #ffffff;
+}
+
+.btn-ready-pickup {
+  background-color: var(--color-primary-light);
+  color: #ffffff;
+}
+
+/* Catalog Table */
+.seller-catalog-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.seller-catalog-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--color-border);
+  text-align: left;
+}
+
+.seller-catalog-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.input-price-edit {
+  width: 90px;
+  padding: 6px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+</style>
+
+<!-- ==============================================================================
+     SELLER VIEW CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  let currentDashboardData = null;
+
+  const SellerViewController = {
+    init() {
+      if (window.AppRouter) {
+        const handler = () => this.render();
+        window.AppRouter.register('seller', handler);
+        window.AppRouter.register('seller-portal', handler);
+      }
+
+      this.bindLoginEvents_();
+    },
+
+    render() {
+      const sellerViewEl = document.getElementById('view-seller');
+      const loginPanel = document.getElementById('seller-login-panel');
+      const dashPanel = document.getElementById('seller-dashboard-panel');
+
+      if (sellerViewEl) sellerViewEl.classList.remove('hidden');
+
+      const token = window.AppStore ? window.AppStore.state.authToken : null;
+
+      if (!token) {
+        if (loginPanel) loginPanel.classList.remove('hidden');
+        if (dashPanel) dashPanel.classList.add('hidden');
+        return;
+      }
+
+      // User has token: load merchant dashboard data
+      if (loginPanel) loginPanel.classList.add('hidden');
+      if (dashPanel) dashPanel.classList.remove('hidden');
+
+      this.fetchDashboardData_();
+    },
+
+    fetchDashboardData_() {
+      window.AppUI.showLoader('Loading Dashboard', 'Fetching store KPIs & active orders...');
+
+      window.AppApi.call('getSellerDashboard')
+        .then(data => {
+          currentDashboardData = data;
+
+          if (!data.is_approved) {
+            this.renderStagingNotice_(data);
+            return;
+          }
+
+          this.populateProfileBar_(data.profile);
+          this.populateKpis_(data.kpis);
+          this.populateActiveOrders_(data.active_orders || []);
+          this.populateCatalog_(data.catalog || []);
+        })
+        .catch(err => {
+          window.AppUI.showToast(err.error || 'Failed to load seller dashboard', 'error');
+          // If unauthenticated or seller not found, reset to login
+          const loginPanel = document.getElementById('seller-login-panel');
+          const dashPanel = document.getElementById('seller-dashboard-panel');
+          if (loginPanel) loginPanel.classList.remove('hidden');
+          if (dashPanel) dashPanel.classList.add('hidden');
+        })
+        .finally(() => window.AppUI.hideLoader());
+    },
+
+    renderStagingNotice_(data) {
+      const dashPanel = document.getElementById('seller-dashboard-panel');
+      if (dashPanel) {
+        dashPanel.innerHTML = `
+          <div class="card text-center" style="max-width:540px;margin:40px auto;padding:48px 24px;">
+            <div style="font-size:42px;margin-bottom:12px;">⏳</div>
+            <h2 style="color:var(--color-primary);margin-bottom:8px;">Application Under Review</h2>
+            <p style="color:#64748b;font-size:14px;line-height:1.6;margin-bottom:20px;">
+              Your shop <strong>${escapeHtml(data.business_name)}</strong> is currently in status <strong>${escapeHtml(data.approval_status)}</strong>.
+              Our local marketplace operations team will verify your trade details and activate your shop within 24 hours.
+            </p>
+            <button type="button" class="btn btn-secondary" onclick="window.AppStore.setAuth(null, null); window.SellerViewController.render();">
+              Log Out
+            </button>
+          </div>`;
+      }
+    },
+
+    populateProfileBar_(profile) {
+      const nameEl = document.getElementById('seller-name-display');
+      const metaEl = document.getElementById('seller-meta-display');
+      const storeStatusLabel = document.getElementById('store-status-label');
+
+      if (nameEl) nameEl.textContent = profile.business_name;
+      if (metaEl) metaEl.textContent = `${profile.locality} | Rating: ★ ${profile.rating_avg} (${profile.review_count} reviews)`;
+      if (storeStatusLabel) {
+        storeStatusLabel.textContent = profile.is_open ? 'Store: OPEN' : 'Store: CLOSED';
+        storeStatusLabel.style.color = profile.is_open ? 'var(--color-success)' : 'var(--color-danger)';
+      }
+    },
+
+    populateKpis_(k) {
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+      document.getElementById('kpi-pending-orders').textContent = k.pending_confirmation;
+      document.getElementById('kpi-ready-orders').textContent = k.ready_for_pickup;
+      document.getElementById('kpi-transit-orders').textContent = k.in_transit;
+      document.getElementById('kpi-completed-orders').textContent = k.completed_orders;
+      document.getElementById('kpi-gross-sales').textContent = `${curr}${k.total_gross_sales_inr}`;
+      document.getElementById('kpi-net-payout').textContent = `${curr}${k.total_net_payout_inr}`;
+    },
+
+    populateActiveOrders_(orders) {
+      const mount = document.getElementById('seller-orders-mount');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!mount) return;
+
+      if (orders.length === 0) {
+        mount.innerHTML = `
+          <div style="text-align:center;padding:32px 16px;color:#64748b;">
+            <p>✓ All caught up! No active orders waiting for merchant action right now.</p>
+          </div>`;
+        return;
+      }
+
+      let ordersHtml = '';
+      orders.forEach(order => {
+        const isPlaced = order.current_status === 'PLACED' || order.current_status === 'SELLER_NOTIFIED';
+        const isConfirmed = order.current_status === 'SELLER_CONFIRMED' || order.current_status === 'PACKING';
+
+        ordersHtml += `
+          <div class="seller-order-card">
+            <div class="seller-order-top">
+              <div>
+                <strong>Order: ${escapeHtml(order.order_id)}</strong>
+                <span class="badge" style="margin-left:8px;background-color:#e8f5e9;color:#1b4332;">${escapeHtml(order.current_status)}</span>
+              </div>
+              <div style="font-size:12px;color:#64748b;">${new Date(order.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+            </div>
+
+            <div class="seller-order-details-grid">
+              <div>
+                <span style="color:#64748b;font-size:11px;display:block;">DELIVERY AREA</span>
+                <strong>${escapeHtml(order.delivery_locality || 'Garia')}</strong> (~ ${order.approx_distance_km || 1} km)
+              </div>
+              <div>
+                <span style="color:#64748b;font-size:11px;display:block;">ORDER WEIGHT</span>
+                <strong>${order.total_weight_kg || 25} kg</strong>
+              </div>
+              <div>
+                <span style="color:#64748b;font-size:11px;display:block;">YOUR NET PAYOUT</span>
+                <strong style="color:var(--color-primary);font-size:15px;">${curr}${order.seller_payout_inr}</strong>
+              </div>
+            </div>
+
+            <div class="seller-action-buttons-row">
+              ${isPlaced ? `
+                <button type="button" class="btn btn-sm btn-confirm-order btn-act-confirm" data-id="${order.order_id}">
+                  ✓ CONFIRM ORDER
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary btn-act-reject" data-id="${order.order_id}">
+                  ✕ Out of Stock
+                </button>
+              ` : ''}
+
+              ${isConfirmed ? `
+                <button type="button" class="btn btn-sm btn-ready-pickup btn-act-ready" data-id="${order.order_id}">
+                  📦 MARK READY FOR PICKUP
+                </button>
+              ` : ''}
+            </div>
+          </div>`;
+      });
+
+      mount.innerHTML = ordersHtml;
+
+      // Bind Confirm Button
+      mount.querySelectorAll('.btn-act-confirm').forEach(btn => {
+        btn.onclick = (e) => {
+          const oid = e.currentTarget.getAttribute('data-id');
+          this.executeOrderStatusShift_(oid, 'SELLER_CONFIRMED', 'Merchant confirmed order readiness.');
+        };
+      });
+
+      // Bind Reject Button
+      mount.querySelectorAll('.btn-act-reject').forEach(btn => {
+        btn.onclick = (e) => {
+          const oid = e.currentTarget.getAttribute('data-id');
+          this.executeOrderStatusShift_(oid, 'SELLER_REJECTED', 'Stock temporarily unavailable.');
+        };
+      });
+
+      // Bind Ready for Pickup Button (Section 29)
+      mount.querySelectorAll('.btn-act-ready').forEach(btn => {
+        btn.onclick = (e) => {
+          const oid = e.currentTarget.getAttribute('data-id');
+          this.executeOrderStatusShift_(oid, 'READY_FOR_PICKUP', 'Rice bags packed. Ready for rider collection.');
+        };
+      });
+    },
+
+    executeOrderStatusShift_(orderId, toStatus, remarks) {
+      window.AppUI.showLoader('Updating Order', 'Validating state transition...');
+
+      window.AppApi.call('updateOrderStatus', {
+        order_id: orderId,
+        to_status: toStatus,
+        remarks: remarks
+      })
+      .then(res => {
+        window.AppUI.showToast(`Order ${orderId} updated to ${toStatus}`, 'success');
+        this.fetchDashboardData_();
+      })
+      .catch(err => {
+        window.AppUI.showToast(err.error || 'Failed to update order status', 'error');
+      })
+      .finally(() => window.AppUI.hideLoader());
+    },
+
+    populateCatalog_(products) {
+      const mount = document.getElementById('seller-catalog-mount');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!mount) return;
+
+      if (products.length === 0) {
+        mount.innerHTML = `
+          <div style="text-align:center;padding:24px;color:#64748b;">
+            <p>You have not listed any rice varieties yet. Click "+ Add New Rice Listing" to get started.</p>
+          </div>`;
+        return;
+      }
+
+      let rowsHtml = '';
+      products.forEach(p => {
+        const inStock = p.is_available && p.stock_status === 'IN_STOCK';
+
+        rowsHtml += `
+          <tr>
+            <td>
+              <strong>${escapeHtml(p.name_en)}</strong>
+              <div style="font-size:12px;color:#64748b;">${escapeHtml(p.variety)} (${p.pack_size_kg} kg)</div>
+            </td>
+            <td>
+              <div class="flex items-center gap-2">
+                <span>${curr}</span>
+                <input type="number" class="input-price-edit" value="${p.price_inr}" id="price-input-${p.product_id}">
+                <button type="button" class="btn btn-sm btn-secondary btn-save-price" data-id="${p.product_id}">Save</button>
+              </div>
+            </td>
+            <td>
+              <span class="badge ${inStock ? 'badge-verified' : 'badge-status'}">
+                ${inStock ? 'In Stock' : 'Out of Stock'}
+              </span>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm ${inStock ? 'btn-outline' : 'btn-primary'} btn-toggle-stock" data-id="${p.product_id}" data-active="${inStock ? 'false' : 'true'}">
+                ${inStock ? 'Mark Out of Stock' : 'Mark In Stock'}
+              </button>
+            </td>
+          </tr>`;
+      });
+
+      mount.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table class="seller-catalog-table">
+            <thead>
+              <tr>
+                <th>Rice Variety & Pack</th>
+                <th>Price (INR)</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>`;
+
+      // Bind Price Save Buttons
+      mount.querySelectorAll('.btn-save-price').forEach(btn => {
+        btn.onclick = (e) => {
+          const pid = e.currentTarget.getAttribute('data-id');
+          const input = document.getElementById(`price-input-${pid}`);
+          const newPrice = input ? parseFloat(input.value) : 0;
+          if (newPrice > 0) {
+            this.updateProductPrice_(pid, newPrice);
+          }
+        };
+      });
+
+      // Bind Stock Toggle Buttons
+      mount.querySelectorAll('.btn-toggle-stock').forEach(btn => {
+        btn.onclick = (e) => {
+          const pid = e.currentTarget.getAttribute('data-id');
+          const nextActive = e.currentTarget.getAttribute('data-active') === 'true';
+          this.updateProductAvailability_(pid, nextActive);
+        };
+      });
+    },
+
+    updateProductPrice_(productId, newPrice) {
+      window.AppUI.showLoader('Updating Price', 'Saving new price to catalog...');
+      window.AppApi.call('updateProductPrice', {
+        product_id: productId,
+        price_inr: newPrice
+      })
+      .then(res => {
+        window.AppUI.showToast('Rice price updated successfully!', 'success');
+        this.fetchDashboardData_();
+      })
+      .catch(err => {
+        window.AppUI.showToast(err.error || 'Failed to update price', 'error');
+      })
+      .finally(() => window.AppUI.hideLoader());
+    },
+
+    updateProductAvailability_(productId, isAvailable) {
+      window.AppUI.showLoader('Updating Inventory', 'Toggling availability...');
+      window.AppApi.call('updateProductAvailability', {
+        product_id: productId,
+        is_available: isAvailable,
+        stock_status: isAvailable ? 'IN_STOCK' : 'OUT_OF_STOCK'
+      })
+      .then(res => {
+        window.AppUI.showToast('Stock availability updated!', 'success');
+        this.fetchDashboardData_();
+      })
+      .catch(err => {
+        window.AppUI.showToast(err.error || 'Failed to toggle availability', 'error');
+      })
+      .finally(() => window.AppUI.hideLoader());
+    },
+
+    bindLoginEvents_() {
+      const loginBtn = document.getElementById('btn-seller-login');
+      const logoutBtn = document.getElementById('btn-seller-logout');
+      const toggleStoreBtn = document.getElementById('btn-toggle-store');
+      const addProductBtn = document.getElementById('btn-open-add-product');
+
+      if (loginBtn) {
+        loginBtn.onclick = () => {
+          const phoneInput = document.getElementById('seller-login-phone');
+          const phone = phoneInput ? phoneInput.value.trim() : '';
+
+          if (phone.length === 10) {
+            window.AppUI.showLoader('Authenticating', 'Verifying merchant credentials...');
+            window.AppApi.call('authenticateUser', { phone: phone, role: 'SELLER' })
+              .then(res => {
+                window.AppStore.setAuth(res.token, res.user);
+                window.AppUI.showToast('Merchant authenticated!', 'success');
+                this.render();
+              })
+              .catch(err => {
+                window.AppUI.showToast(err.error || 'Login failed', 'error');
+              })
+              .finally(() => window.AppUI.hideLoader());
+          } else {
+            window.AppUI.showToast('Please enter your 10-digit mobile number.', 'error');
+          }
+        };
+      }
+
+      if (logoutBtn) {
+        logoutBtn.onclick = () => {
+          window.AppStore.setAuth(null, null);
+          window.AppUI.showToast('Logged out of seller portal.', 'info');
+          this.render();
+        };
+      }
+
+      if (toggleStoreBtn) {
+        toggleStoreBtn.onclick = () => {
+          const currentOpen = currentDashboardData?.profile?.is_open;
+          const nextState = !currentOpen;
+          window.AppUI.showLoader('Updating Store', 'Toggling availability...');
+          window.AppApi.call('updateStoreStatus', { is_open: nextState })
+            .then(res => {
+              window.AppUI.showToast(res.message, 'success');
+              this.fetchDashboardData_();
+            })
+            .catch(err => {
+              window.AppUI.showToast(err.error || 'Failed to toggle store', 'error');
+            })
+            .finally(() => window.AppUI.hideLoader());
+        };
+      }
+
+      if (addProductBtn) {
+        addProductBtn.onclick = () => this.openAddProductModal_();
+      }
+    },
+
+    openAddProductModal_() {
+      window.AppUI.showModal(
+        'Submit New Rice Variety',
+        `<form id="modal-add-product-form">
+           <div class="form-group">
+             <label class="form-label">Rice Variety Name *</label>
+             <input type="text" id="add-prod-name" class="form-input" placeholder="e.g. Miniket (Burdwan Mill)" required>
+           </div>
+           <div class="form-row-2">
+             <div class="form-group">
+               <label class="form-label">Variety Keyword *</label>
+               <input type="text" id="add-prod-variety" class="form-input" placeholder="e.g. Miniket" required>
+             </div>
+             <div class="form-group">
+               <label class="form-label">Pack Size *</label>
+               <select id="add-prod-pack" class="form-select">
+                 <option value="2">2 kg</option>
+                 <option value="5">5 kg</option>
+                 <option value="10">10 kg</option>
+                 <option value="25" selected>25 kg (Daily Bag)</option>
+                 <option value="26">26 kg</option>
+                 <option value="50">50 kg</option>
+               </select>
+             </div>
+           </div>
+           <div class="form-group">
+             <label class="form-label">Price per Bag (INR) *</label>
+             <input type="number" id="add-prod-price" class="form-input" placeholder="e.g. 1390" required>
+           </div>
+         </form>`,
+        () => {
+          const name = document.getElementById('add-prod-name')?.value.trim();
+          const variety = document.getElementById('add-prod-variety')?.value.trim();
+          const pack = parseFloat(document.getElementById('add-prod-pack')?.value);
+          const price = parseFloat(document.getElementById('add-prod-price')?.value);
+
+          if (!name || !variety || !price || price <= 0) {
+            window.AppUI.showToast('Please fill all mandatory fields with a valid price.', 'error');
+            return;
+          }
+
+          window.AppUI.showLoader('Submitting', 'Sending listing for review...');
+          window.AppApi.call('submitProduct', {
+            name_en: name,
+            variety: variety,
+            pack_size_kg: pack,
+            price_inr: price,
+            brand: 'Local Mill Selection'
+          })
+          .then(res => {
+            window.AppUI.showToast(res.message, 'success');
+            this.fetchDashboardData_();
+          })
+          .catch(err => {
+            window.AppUI.showToast(err.error || 'Failed to submit listing', 'error');
+          })
+          .finally(() => window.AppUI.hideLoader());
+        },
+        'Submit for Review'
+      );
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.SellerViewController = SellerViewController;
+  SellerViewController.init();
+
+})(window);
+</script>
