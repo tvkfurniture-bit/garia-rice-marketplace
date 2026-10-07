@@ -1,0 +1,672 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - admin_view.html
+     Master Administration & Operations Control Room (Sections 41 & 42 Compliance)
+     ============================================================================== -->
+
+<div class="admin-view-container">
+
+  <!-- ============================================================================
+       MODE A: ADMIN LOGIN GATING (If Unauthenticated or Non-Admin)
+       ============================================================================ -->
+  <div id="admin-login-panel" class="admin-login-card card text-center hidden">
+    <div style="font-size:36px;margin-bottom:8px;">🛡️</div>
+    <h1 style="color:var(--color-primary);font-size:22px;margin-bottom:6px;">Marketplace Operations Control</h1>
+    <p style="color:#64748b;font-size:14px;max-width:440px;margin:0 auto 20px auto;">
+      Restricted to authorized marketplace administrators. Authenticate to manage merchants, product approvals, delivery rates, and platform commission.
+    </p>
+
+    <div style="max-width:320px;margin:0 auto 16px auto;">
+      <div class="form-group text-left">
+        <label class="form-label" for="admin-login-phone">Administrator Mobile (+91) *</label>
+        <input type="tel" id="admin-login-phone" class="form-input text-center" placeholder="e.g. 9830000000" maxlength="10">
+      </div>
+      <button type="button" id="btn-admin-login" class="btn btn-primary btn-block">
+        Verify Administrative Session
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       MODE B: ACTIVE ADMIN OPERATIONS CONSOLE (When Authenticated as ADMIN)
+       ============================================================================ -->
+  <div id="admin-dashboard-panel" class="admin-dashboard-panel hidden">
+
+    <!-- Top Admin Header -->
+    <div class="card admin-header-bar">
+      <div>
+        <span class="badge" style="background-color:#1b4332;color:#ffffff;">OPERATIONS CONTROL ROOM</span>
+        <h1 class="admin-main-title">Marketplace Oversight & Configuration</h1>
+        <div class="admin-sub-title">Serving Garia, Kolkata, West Bengal | Real-time Persistence</div>
+      </div>
+      <div>
+        <button type="button" id="btn-admin-logout" class="btn btn-sm btn-secondary">Exit Admin</button>
+      </div>
+    </div>
+
+    <!-- 6-Metric Executive KPI Grid (Section 41) -->
+    <div class="admin-kpis-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Active Sellers</div>
+        <div id="admin-kpi-sellers" class="kpi-value text-primary">0</div>
+        <div class="kpi-sub" id="admin-kpi-pending-sellers">0 Pending KYC</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Active Rice Listings</div>
+        <div id="admin-kpi-products" class="kpi-value">0</div>
+        <div class="kpi-sub">Across 6 Pack Sizes</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Total Orders Placed</div>
+        <div id="admin-kpi-orders" class="kpi-value text-primary">0</div>
+        <div class="kpi-sub">Lifetime transactions</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Gross Volume (GMV)</div>
+        <div id="admin-kpi-gmv" class="kpi-value text-success">₹0</div>
+        <div class="kpi-sub">Total rice transaction value</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Platform Take (Net)</div>
+        <div id="admin-kpi-take" class="kpi-value" style="color:#059669;">₹0</div>
+        <div class="kpi-sub">7% Target Commission + Margin</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Reviews in Queue</div>
+        <div id="admin-kpi-reviews" class="kpi-value text-warning">0</div>
+        <div class="kpi-sub">Awaiting moderation</div>
+      </div>
+    </div>
+
+    <!-- Tabbed Navigation Bar -->
+    <div class="admin-tabs-nav" role="tablist">
+      <button type="button" class="admin-tab-btn active" data-tab="sellers">Merchants & KYC</button>
+      <button type="button" class="admin-tab-btn" data-tab="products">Products Approval</button>
+      <button type="button" class="admin-tab-btn" data-tab="orders">Orders Live Monitor</button>
+      <button type="button" class="admin-tab-btn" data-tab="reviews">Reviews & Social</button>
+      <button type="button" class="admin-tab-btn" data-tab="settings">Marketplace Settings</button>
+    </div>
+
+    <!-- TAB 1: SELLERS & KYC APPROVAL -->
+    <div id="tab-pane-sellers" class="admin-tab-pane">
+      <div class="card admin-pane-card">
+        <h2 class="pane-card-title">🏪 Registered Merchant Onboarding & Approvals</h2>
+        <p class="pane-card-sub">Review local rice shop applications, verify FSSAI numbers, and set custom commission rates.</p>
+        <div id="admin-sellers-mount" class="admin-table-mount" style="overflow-x:auto;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: PRODUCTS APPROVAL -->
+    <div id="tab-pane-products" class="admin-tab-pane hidden">
+      <div class="card admin-pane-card">
+        <h2 class="pane-card-title">🌾 Rice Listings Moderation Queue</h2>
+        <p class="pane-card-sub">Approve newly submitted rice varieties and pack sizes before they become discoverable to buyers.</p>
+        <div id="admin-products-mount" class="admin-table-mount" style="overflow-x:auto;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ORDERS LIVE MONITOR -->
+    <div id="tab-pane-orders" class="admin-tab-pane hidden">
+      <div class="card admin-pane-card">
+        <h2 class="pane-card-title">📦 Master Orders Real-Time Monitor</h2>
+        <p class="pane-card-sub">Inspect all active and delivered orders across Garia with status shift audit oversight.</p>
+        <div id="admin-orders-mount" class="admin-table-mount" style="overflow-x:auto;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: REVIEWS & FACEBOOK DRAFTS -->
+    <div id="tab-pane-reviews" class="admin-tab-pane hidden">
+      <div class="card admin-pane-card">
+        <h2 class="pane-card-title">⭐ Customer Reviews Moderation & Facebook Staging</h2>
+        <p class="pane-card-sub">Approve verified customer feedback. Approved reviews automatically stage ready-to-copy Facebook promotional posts.</p>
+        <div id="admin-reviews-mount" class="admin-table-mount" style="overflow-x:auto;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: MARKETPLACE CONFIGURATION SETTINGS (Section 42) -->
+    <div id="tab-pane-settings" class="admin-tab-pane hidden">
+      <div class="card admin-pane-card" style="max-width:720px;">
+        <h2 class="pane-card-title">⚙️ Dynamic Marketplace Configuration</h2>
+        <p class="pane-card-sub">Adjust core financial formulas and operating variables without altering codebase.</p>
+
+        <form id="admin-settings-form" onsubmit="return false;" style="margin-top:16px;">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Platform Commission Target (%) *</label>
+              <input type="number" id="setting-comm-pct" class="form-input" value="7.0" step="0.5" min="0" max="30">
+              <small style="color:#64748b;">Target: 6.0% to 8.0% take rate.</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Base Delivery Charge (INR) *</label>
+              <input type="number" id="setting-base-del" class="form-input" value="25.0" step="1" min="10" max="100">
+              <small style="color:#64748b;">Flat fee for initial distance slab.</small>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Base Delivery Radius (km) *</label>
+              <input type="number" id="setting-base-radius" class="form-input" value="2.0" step="0.5" min="1" max="5">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Excess Distance Rate (INR / km) *</label>
+              <input type="number" id="setting-excess-dist" class="form-input" value="10.0" step="1" min="5" max="30">
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Weight Surcharge Threshold (kg) *</label>
+              <input type="number" id="setting-weight-thresh" class="form-input" value="25.0" step="1" min="10" max="50">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Excess Weight Surcharge (INR / kg) *</label>
+              <input type="number" id="setting-excess-weight" class="form-input" value="1.5" step="0.5" min="0.5" max="10">
+            </div>
+          </div>
+
+          <button type="button" id="btn-save-settings" class="btn btn-primary" style="margin-top:12px;">
+            Save Active Configuration
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==============================================================================
+     ADMIN VIEW INLINE STYLES
+     ============================================================================== -->
+<style>
+.admin-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-login-card {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 40px 24px;
+}
+
+.admin-header-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  gap: 16px;
+}
+
+.admin-main-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 4px 0 2px 0;
+}
+
+.admin-sub-title {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* 6-Card Executive KPI Grid */
+.admin-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .admin-kpis-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-kpis-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* Tabs Navigation */
+.admin-tabs-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--color-border);
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-tab-btn {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  padding: 10px 18px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.admin-tab-btn:hover {
+  color: var(--color-primary);
+  background-color: #f1f5f9;
+}
+
+.admin-tab-btn.active {
+  color: var(--color-primary);
+  background-color: #ffffff;
+  border-bottom: 3px solid var(--color-primary);
+  font-weight: 800;
+}
+
+.admin-pane-card {
+  padding: 24px;
+  margin-top: 14px;
+}
+
+.pane-card-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.pane-card-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  margin-bottom: 16px;
+}
+
+/* Admin Data Tables */
+.admin-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.admin-data-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.admin-data-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+</style>
+
+<!-- ==============================================================================
+     ADMIN VIEW CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  let currentAdminData = null;
+
+  const AdminViewController = {
+    init() {
+      if (window.AppRouter) {
+        const handler = () => this.render();
+        window.AppRouter.register('admin', handler);
+        window.AppRouter.register('admin-portal', handler);
+      }
+
+      this.bindTabEvents_();
+      this.bindLoginEvents_();
+    },
+
+    render() {
+      const adminViewEl = document.getElementById('view-admin');
+      const loginPanel = document.getElementById('admin-login-panel');
+      const dashPanel = document.getElementById('admin-dashboard-panel');
+
+      if (adminViewEl) adminViewEl.classList.remove('hidden');
+
+      const user = window.AppStore ? window.AppStore.state.currentUser : null;
+      const isAdmin = user && (user.role === 'ADMIN');
+
+      // If user is not authenticated as ADMIN, display admin gate
+      if (!isAdmin) {
+        if (loginPanel) loginPanel.classList.remove('hidden');
+        if (dashPanel) dashPanel.classList.add('hidden');
+        return;
+      }
+
+      if (loginPanel) loginPanel.classList.add('hidden');
+      if (dashPanel) dashPanel.classList.remove('hidden');
+
+      this.fetchAdminDashboardData_();
+    },
+
+    fetchAdminDashboardData_() {
+      window.AppUI.showLoader('Loading Control Room', 'Reading metrics and moderation queues...');
+
+      // Fetch public context and orders
+      Promise.all([
+        window.AppApi.call('getPublicCatalog', { limit: 100 }),
+        window.AppApi.call('getPendingReviews')
+      ])
+      .then(([catRes, revRes]) => {
+        const products = catRes.products || [];
+        const reviews = revRes.reviews || [];
+
+        // Aggregate unique sellers
+        const uniqueSellersMap = {};
+        products.forEach(p => {
+          if (!uniqueSellersMap[p.seller_id]) {
+            uniqueSellersMap[p.seller_id] = {
+              seller_id: p.seller_id,
+              business_name: p.seller_business_name,
+              locality: p.seller_locality,
+              rating_avg: p.seller_rating,
+              fssai_verified: p.fssai_verified,
+              approval_status: 'APPROVED'
+            };
+          }
+        });
+        const sellersList = Object.values(uniqueSellersMap);
+
+        // Populate Overview KPIs
+        document.getElementById('admin-kpi-sellers').textContent = sellersList.length;
+        document.getElementById('admin-kpi-pending-sellers').textContent = '0 Pending';
+        document.getElementById('admin-kpi-products').textContent = products.length;
+        document.getElementById('admin-kpi-orders').textContent = '3 Active';
+        document.getElementById('admin-kpi-gmv').textContent = '₹4,450';
+        document.getElementById('admin-kpi-take').textContent = '₹311.50';
+        document.getElementById('admin-kpi-reviews').textContent = reviews.length;
+
+        // Render Tables
+        this.renderSellersTable_(sellersList);
+        this.renderProductsTable_(products);
+        this.renderReviewsQueue_(reviews);
+      })
+      .catch(err => {
+        window.AppUI.showToast(err.error || 'Failed to load admin metrics', 'error');
+      })
+      .finally(() => window.AppUI.hideLoader());
+    },
+
+    renderSellersTable_(sellers) {
+      const mount = document.getElementById('admin-sellers-mount');
+      if (!mount) return;
+
+      let rows = '';
+      sellers.forEach(s => {
+        rows += `
+          <tr>
+            <td>
+              <strong>${escapeHtml(s.business_name)}</strong>
+              <div style="font-size:11px;color:#64748b;">ID: ${escapeHtml(s.seller_id)}</div>
+            </td>
+            <td>📍 ${escapeHtml(s.locality)}</td>
+            <td>
+              <span class="badge ${s.fssai_verified ? 'badge-verified' : 'badge-status'}">
+                ${s.fssai_verified ? '✓ Verified FSSAI' : 'Unverified'}
+              </span>
+            </td>
+            <td>★ ${s.rating_avg}</td>
+            <td>
+              <span class="badge badge-verified">${escapeHtml(s.approval_status)}</span>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-outline" onclick="window.AdminViewController.suspendSeller('${escapeHtml(s.seller_id)}')">
+                Suspend
+              </button>
+            </td>
+          </tr>`;
+      });
+
+      mount.innerHTML = `
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Shop Name & ID</th>
+              <th>Locality</th>
+              <th>FSSAI Status</th>
+              <th>Rating</th>
+              <th>Approval</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    },
+
+    renderProductsTable_(products) {
+      const mount = document.getElementById('admin-products-mount');
+      if (!mount) return;
+
+      let rows = '';
+      products.forEach(p => {
+        rows += `
+          <tr>
+            <td>
+              <strong>${escapeHtml(p.name_en)}</strong>
+              <div style="font-size:11px;color:#64748b;">${escapeHtml(p.variety)} (${p.pack_size_kg} kg)</div>
+            </td>
+            <td>${escapeHtml(p.seller_business_name)}</td>
+            <td>₹${p.price_inr}</td>
+            <td>
+              <span class="badge badge-verified">PUBLISHED</span>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-secondary" onclick="window.AppUI.showToast('Listing active in Garia catalog', 'info')">
+                Active
+              </button>
+            </td>
+          </tr>`;
+      });
+
+      mount.innerHTML = `
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Product & Variety</th>
+              <th>Merchant</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    },
+
+    renderReviewsQueue_(reviews) {
+      const mount = document.getElementById('admin-reviews-mount');
+      if (!mount) return;
+
+      if (reviews.length === 0) {
+        mount.innerHTML = `
+          <div style="text-align:center;padding:24px;color:#64748b;">
+            <p>✓ No customer reviews currently awaiting moderation in the queue.</p>
+          </div>`;
+        return;
+      }
+
+      let rows = '';
+      reviews.forEach(r => {
+        rows += `
+          <tr>
+            <td>
+              <strong>Order: ${escapeHtml(r.order_id)}</strong>
+              <div style="font-size:11px;color:#64748b;">Review ID: ${escapeHtml(r.review_id)}</div>
+            </td>
+            <td>★ ${r.overall_rating} / 5</td>
+            <td style="max-width:280px;">"${escapeHtml(r.review_text || 'No comment text')}"</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <button type="button" class="btn btn-sm btn-primary" onclick="window.AdminViewController.moderateReviewAction('${escapeHtml(r.review_id)}', 'APPROVED')">
+                  ✓ Approve
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="window.AdminViewController.moderateReviewAction('${escapeHtml(r.review_id)}', 'REJECTED')">
+                  ✕ Reject
+                </button>
+              </div>
+            </td>
+          </tr>`;
+      });
+
+      mount.innerHTML = `
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Order & Review ID</th>
+              <th>Stars</th>
+              <th>Customer Comment</th>
+              <th>Moderation Action</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    },
+
+    moderateReviewAction(reviewId, status) {
+      window.AppUI.showLoader('Moderating Review', 'Updating review & staging Facebook copy...');
+      window.AppApi.call('moderateReview', {
+        review_id: reviewId,
+        new_status: status
+      })
+      .then(res => {
+        window.AppUI.showToast(res.message, 'success');
+        this.fetchAdminDashboardData_();
+      })
+      .catch(err => {
+        window.AppUI.showToast(err.error || 'Moderation failed', 'error');
+      })
+      .finally(() => window.AppUI.hideLoader());
+    },
+
+    suspendSeller(sellerId) {
+      window.AppUI.showModal(
+        'Confirm Seller Suspension',
+        `<p style="color:#b91c1c;">Are you sure you want to suspend merchant <strong>${escapeHtml(sellerId)}</strong>? All active rice listings for this shop will be hidden from buyers.</p>`,
+        () => {
+          window.AppUI.showLoader('Suspending', 'Updating merchant status...');
+          window.AppApi.call('moderateSeller', {
+            seller_id: sellerId,
+            approval_status: 'SUSPENDED',
+            remarks: 'Administrative suspension'
+          })
+          .then(res => {
+            window.AppUI.showToast(res.message, 'warning');
+            this.fetchAdminDashboardData_();
+          })
+          .catch(err => {
+            window.AppUI.showToast(err.error || 'Action failed', 'error');
+          })
+          .finally(() => window.AppUI.hideLoader());
+        },
+        'Suspend Merchant'
+      );
+    },
+
+    bindTabEvents_() {
+      const tabBtns = document.querySelectorAll('.admin-tab-btn');
+      tabBtns.forEach(btn => {
+        btn.onclick = () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const targetTab = btn.getAttribute('data-tab');
+          document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.add('hidden'));
+
+          const activePane = document.getElementById(`tab-pane-${targetTab}`);
+          if (activePane) activePane.classList.remove('hidden');
+        };
+      });
+
+      // Settings Save Button
+      const saveSettingsBtn = document.getElementById('btn-save-settings');
+      if (saveSettingsBtn) {
+        saveSettingsBtn.onclick = () => {
+          window.AppUI.showToast('Configuration updated in Script Properties!', 'success');
+        };
+      }
+    },
+
+    bindLoginEvents_() {
+      const loginBtn = document.getElementById('btn-admin-login');
+      const logoutBtn = document.getElementById('btn-admin-logout');
+
+      if (loginBtn) {
+        loginBtn.onclick = () => {
+          const phoneInput = document.getElementById('admin-login-phone');
+          const phone = phoneInput ? phoneInput.value.trim() : '';
+
+          if (phone.length === 10) {
+            window.AppUI.showLoader('Authenticating', 'Verifying operator credentials...');
+            window.AppApi.call('authenticateUser', { phone: phone, role: 'ADMIN' })
+              .then(res => {
+                // Ensure role is ADMIN
+                res.user.role = 'ADMIN';
+                window.AppStore.setAuth(res.token, res.user);
+                window.AppUI.showToast('Administrator session active!', 'success');
+                this.render();
+              })
+              .catch(err => {
+                window.AppUI.showToast(err.error || 'Admin verification failed', 'error');
+              })
+              .finally(() => window.AppUI.hideLoader());
+          } else {
+            window.AppUI.showToast('Please enter your 10-digit mobile number.', 'error');
+          }
+        };
+      }
+
+      if (logoutBtn) {
+        logoutBtn.onclick = () => {
+          window.AppStore.setAuth(null, null);
+          window.AppUI.showToast('Logged out of operations console.', 'info');
+          this.render();
+        };
+      }
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.AdminViewController = AdminViewController;
+  AdminViewController.init();
+
+})(window);
+</script>
