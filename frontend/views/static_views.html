@@ -1,0 +1,651 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - static_views.html
+     Master Informational, Partner Onboarding & Legal Policies (Sections 22, 30, 52)
+     ============================================================================== -->
+
+<div class="static-view-container">
+  <!-- Dynamic Mount for Sub-Route Content -->
+  <div id="static-content-mount" class="static-content-mount">
+    <!-- Rendered dynamically by StaticViewController -->
+  </div>
+</div>
+
+<!-- ==============================================================================
+     STATIC VIEWS INLINE STYLES
+     ============================================================================== -->
+<style>
+.static-view-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.static-doc-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  box-shadow: var(--shadow-sm);
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+  .static-doc-card { padding: 48px 40px; }
+}
+
+.static-header-box {
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.static-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0 0 6px 0;
+}
+
+.static-page-sub {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.static-section-heading {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 24px 0 10px 0;
+}
+
+.static-paragraph {
+  font-size: 14px;
+  color: #334155;
+  margin-bottom: 16px;
+}
+
+.static-list {
+  padding-left: 20px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.static-list li {
+  margin-bottom: 8px;
+}
+
+.faq-accordion-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.faq-question-btn {
+  width: 100%;
+  padding: 14px 18px;
+  text-align: left;
+  background-color: #f8fafc;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-answer-body {
+  padding: 16px 18px;
+  font-size: 14px;
+  color: #475569;
+  background-color: #ffffff;
+  border-top: 1px solid var(--color-border);
+  line-height: 1.6;
+}
+
+.onboarding-hero-banner {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.onboarding-hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.onboarding-hero-desc {
+  font-size: 14px;
+  color: #b7e4c7;
+  max-width: 600px;
+  margin: 0 auto;
+}
+</style>
+
+<!-- ==============================================================================
+     STATIC VIEWS CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  const StaticViewController = {
+    init() {
+      if (window.AppRouter) {
+        const routes = [
+          'about', 'how-it-works', 'contact', 'faq', 'privacy',
+          'terms', 'refund-policy', 'delivery-policy', 'seller-policy',
+          'become-a-seller', 'become-a-delivery-partner', 'static'
+        ];
+
+        routes.forEach(route => {
+          window.AppRouter.register(route, (segments, params) => {
+            const page = segments[0] === 'static' ? (segments[1] || 'about') : segments[0];
+            this.renderPage(page);
+          });
+        });
+      }
+    },
+
+    renderPage(pageName) {
+      const staticViewEl = document.getElementById('view-static');
+      const mount = document.getElementById('static-content-mount');
+
+      if (staticViewEl) staticViewEl.classList.remove('hidden');
+      if (!mount) return;
+
+      switch (pageName) {
+        case 'about':
+          mount.innerHTML = this.getAboutHtml_();
+          break;
+        case 'how-it-works':
+          mount.innerHTML = this.getHowItWorksHtml_();
+          break;
+        case 'contact':
+          mount.innerHTML = this.getContactHtml_();
+          break;
+        case 'faq':
+          mount.innerHTML = this.getFaqHtml_();
+          this.bindFaqAccordions_();
+          break;
+        case 'become-a-seller':
+          mount.innerHTML = this.getBecomeSellerHtml_();
+          this.bindSellerOnboardingForm_();
+          break;
+        case 'become-a-delivery-partner':
+          mount.innerHTML = this.getBecomeRiderHtml_();
+          this.bindRiderOnboardingForm_();
+          break;
+        case 'privacy':
+          mount.innerHTML = this.getPrivacyHtml_();
+          break;
+        case 'terms':
+          mount.innerHTML = this.getTermsHtml_();
+          break;
+        case 'refund-policy':
+          mount.innerHTML = this.getRefundPolicyHtml_();
+          break;
+        case 'delivery-policy':
+          mount.innerHTML = this.getDeliveryPolicyHtml_();
+          break;
+        case 'seller-policy':
+          mount.innerHTML = this.getSellerPolicyHtml_();
+          break;
+        default:
+          mount.innerHTML = this.getAboutHtml_();
+          break;
+      }
+    },
+
+    // 1. ABOUT US VIEW
+    getAboutHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">About Garia Rice Marketplace™</h1>
+            <div class="static-page-sub">Hyperlocal local-commerce connecting Garia households with neighborhood rice merchants.</div>
+          </div>
+
+          <h2 class="static-section-heading">Our Core Business Principle</h2>
+          <p class="static-paragraph">
+            <strong>Garia Rice Marketplace™ is NOT a rice-selling company.</strong> We do not purchase wholesale inventory, own central warehouses, operate delivery vans, or compete with traditional Bengali rice retail shops.
+          </p>
+          <p class="static-paragraph">
+            Our platform provides pure digital discovery and transparent comparison infrastructure. We connect buyers in Garia, Kolkata directly with verified local licensed rice retailers, mill outlets, and independent neighborhood delivery couriers.
+          </p>
+
+          <h2 class="static-section-heading">Why We Focus on Garia, South Kolkata</h2>
+          <p class="static-paragraph">
+            Rice is the staple heartbeat of Bengal households. A family ordering a 25kg bag of Miniket or a 2kg pack of Nadia Gobindobhog deserves transparent pricing, direct knowledge of which shop packed their grain, and honest, upfront delivery charges without hidden surge fees.
+          </p>
+
+          <h2 class="static-section-heading">Platform Architecture</h2>
+          <ul class="static-list">
+            <li><strong>Zero Inventory Speculation:</strong> Every bag ordered comes directly from an active shop in your locality.</li>
+            <li><strong>Multi-Seller Comparison:</strong> Compare delivered value (Rice Price + Delivery Fee) across competing shops before ordering.</li>
+            <li><strong>Transparent Delivery:</strong> Courier compensation is displayed upfront with zero hidden margins.</li>
+            <li><strong>Verified FSSAI Transparency:</strong> All merchants must submit verified food safety licenses.</li>
+          </ul>
+        </div>`;
+    },
+
+    // 2. HOW IT WORKS VIEW
+    getHowItWorksHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">How It Works</h1>
+            <div class="static-page-sub">Step-by-step buyer, merchant, and delivery coordination.</div>
+          </div>
+
+          <h2 class="static-section-heading">The Customer Journey (4 Simple Steps)</h2>
+          <ol class="static-list" style="padding-left:24px;">
+            <li><strong>Select Locality & Compare:</strong> Choose your neighborhood in Garia (Garia Station, Patuli, Mahamayatala, etc.) and search your preferred rice variety (Miniket, Gobindobhog, Ratna). Compare competing sellers by delivered value.</li>
+            <li><strong>Choose Single Seller & Size:</strong> Select your desired bag size (2kg specialty to 50kg bulk) and add to your basket.</li>
+            <li><strong>Confirm Address & Delivery Fee:</strong> Review the transparent delivery fee breakdown based on distance and bag weight. Pay via Cash on Delivery (COD) or UPI on Delivery.</li>
+            <li><strong>Doorstep Handover & Review:</strong> Receive bulky rice bags delivered directly inside your home. Confirm delivery and leave a verified review.</li>
+          </ol>
+
+          <h2 class="static-section-heading">How Merchants Fulfill Orders</h2>
+          <p class="static-paragraph">
+            When a buyer orders, the merchant receives immediate notification. The shop confirms availability, bags the rice, and clicks <strong>"MARK READY FOR PICKUP"</strong>, which automatically dispatches an eligible nearby courier to collect the load.
+          </p>
+        </div>`;
+    },
+
+    // 3. CONTACT & CUSTOMER CARE
+    getContactHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">Customer Care & Support</h1>
+            <div class="static-page-sub">Prompt human assistance for order tracking, merchant inquiries, and disputes.</div>
+          </div>
+
+          <div style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:24px;">
+            <h3 style="color:#1b4332;margin-top:0;">Garia Operations Helpline</h3>
+            <p style="margin:4px 0 12px 0;font-size:15px;">📞 Phone: <a href="tel:+919830000000" style="color:#1b4332;font-weight:700;">+91 98300 00000</a></p>
+            <p style="margin:4px 0 12px 0;font-size:15px;">💬 WhatsApp: <a href="https://wa.me/919830000000?text=Hello%20Garia%20Rice%20Support" target="_blank" style="color:#059669;font-weight:700;">Chat on WhatsApp</a></p>
+            <p style="margin:4px 0 0 0;font-size:14px;color:#64748b;">✉️ Support Email: support@gariarice.in</p>
+          </div>
+
+          <h2 class="static-section-heading">Operational Hours</h2>
+          <p class="static-paragraph">
+            Customer Care Desk: <strong>8:00 AM – 9:00 PM (Monday through Sunday)</strong><br>
+            Order Deliveries: Handled daily from 8:30 AM to 9:30 PM based on individual shop opening times.
+          </p>
+        </div>`;
+    },
+
+    // 4. BILINGUAL FAQ
+    getFaqHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">Frequently Asked Questions (FAQ)</h1>
+            <div class="static-page-sub">সাধারণ জিজ্ঞাসা — Frequently asked questions in English & Bengali.</div>
+          </div>
+
+          <div class="faq-accordion-item">
+            <button class="faq-question-btn">
+              <span>Why is total delivered price different between sellers?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer-body hidden">
+              Different local shops set their own rice retail prices, and delivery charges vary based on how close the merchant is to your address in Garia. We rank products by <strong>Best Delivered Value</strong> (Rice Price + Delivery Fee) so you always get the lowest total cost.
+            </div>
+          </div>
+
+          <div class="faq-accordion-item">
+            <button class="faq-question-btn">
+              <span>চাল পছন্দ না হলে বা ছেঁড়া বস্তা এলে কি ফেরত দেওয়া যাবে? (Can I return damaged bags?)</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer-body hidden">
+              হ্যাঁ। ডেলিভারির সময় বস্তা ছেঁড়া থাকলে বা চাল নষ্ট হলে ডেলিভারি পার্টনারের উপস্থিতিতে প্রত্যাখ্যান করতে পারেন। আমরা তৎক্ষণাৎ অন্য দোকান থেকে বদলি ব্যবস্থা করব অথবা সম্পূর্ণ টাকা ফেরত দেব। (Yes, inspect bags at doorstep; damaged bags can be rejected immediately.)
+            </div>
+          </div>
+
+          <div class="faq-accordion-item">
+            <button class="faq-question-btn">
+              <span>Can I order products from two different rice shops in one order?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer-body hidden">
+              No. To ensure fast, transparent delivery and avoid multiple delivery fees, each order is fulfilled by a single merchant. If you want rice from a different shop, simply place a separate basket.
+            </div>
+          </div>
+
+          <div class="faq-accordion-item">
+            <button class="faq-question-btn">
+              <span>৫০ কেজি বস্তা কি বাড়িতে পৌঁছে দেওয়া হবে? (Will 50kg bags be delivered home?)</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer-body hidden">
+              হ্যাঁ। আমাদের ডেলিভারি পার্টনার বা টোটো কার্গোর মাধ্যমে ভারী ৫০ কেজি বস্তা আপনার বাড়ির দরজায় পৌঁছে দেওয়া হয়। (Yes, heavy bags up to 50kg are delivered directly to your doorstep.)
+            </div>
+          </div>
+        </div>`;
+    },
+
+    // 5. BECOME A SELLER ONBOARDING
+    getBecomeSellerHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="onboarding-hero-banner">
+            <h1 class="onboarding-hero-title">Sell Rice to Garia Households</h1>
+            <p class="onboarding-hero-desc">Expand your retail shop reach without building your own website, hiring drivers, or paying excessive commissions.</p>
+          </div>
+
+          <h2 class="static-section-heading">Merchant Registration Form</h2>
+          <form id="onboard-seller-form" onsubmit="return false;" style="margin-top:16px;">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Shop / Trade Name *</label>
+                <input type="text" id="ob-seller-biz-name" class="form-input" placeholder="e.g. Maa Tara Chal Bhandar" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Proprietor Full Name *</label>
+                <input type="text" id="ob-seller-owner-name" class="form-input" placeholder="e.g. Subir Biswas" required>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Contact Phone (+91) *</label>
+                <input type="tel" id="ob-seller-phone" class="form-input" placeholder="e.g. 9830033333" maxlength="10" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">WhatsApp Dispatch Number (+91) *</label>
+                <input type="tel" id="ob-seller-wa" class="form-input" placeholder="e.g. 9830033333" maxlength="10" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Physical Shop Street Address *</label>
+              <input type="text" id="ob-seller-address" class="form-input" placeholder="e.g. 88 Garia Main Road, Hindustan More" required>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Garia Locality *</label>
+                <select id="ob-seller-locality" class="form-select">
+                  <option value="Garia Station">Garia Station Road</option>
+                  <option value="Baishnabghata Patuli">Baishnabghata Patuli</option>
+                  <option value="Mahamayatala">Mahamayatala</option>
+                  <option value="Naktala">Naktala</option>
+                  <option value="Kamalgazi">Kamalgazi</option>
+                  <option value="Boral">Boral</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">PIN Code *</label>
+                <input type="text" id="ob-seller-pincode" class="form-input" value="700084" maxlength="6" required>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">14-Digit FSSAI Registration Number (Optional)</label>
+                <input type="text" id="ob-seller-fssai" class="form-input" placeholder="e.g. 12822019000123" maxlength="14">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Delivery Service Radius (km)</label>
+                <select id="ob-seller-radius" class="form-select">
+                  <option value="2.0">2.0 km (Immediate Neighborhood)</option>
+                  <option value="3.5" selected>3.5 km (Standard Garia Coverage)</option>
+                  <option value="5.0">5.0 km (Extended South Kolkata)</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="button" id="btn-submit-seller-ob" class="btn btn-primary btn-block" style="margin-top:14px;">
+              Register Your Business
+            </button>
+          </form>
+        </div>`;
+    },
+
+    // 6. BECOME A DELIVERY PARTNER ONBOARDING
+    getBecomeRiderHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="onboarding-hero-banner" style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+            <h1 class="onboarding-hero-title">Deliver Rice with Garia Rice Fleet</h1>
+            <p class="onboarding-hero-desc">Earn reliable daily delivery compensation by carrying rice orders to local households in Garia.</p>
+          </div>
+
+          <h2 class="static-section-heading">Courier Partner Registration</h2>
+          <form id="onboard-rider-form" onsubmit="return false;" style="margin-top:16px;">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Full Legal Name *</label>
+                <input type="text" id="ob-rider-name" class="form-input" placeholder="e.g. Kartick Halder" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mobile Number (+91) *</label>
+                <input type="tel" id="ob-rider-phone" class="form-input" placeholder="e.g. 9830055555" maxlength="10" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Vehicle Type & Safe Carrying Capacity *</label>
+              <select id="ob-rider-vehicle" class="form-select">
+                <option value="CYCLE">Bicycle (Safe carrying up to 25 kg bag)</option>
+                <option value="MOTORCYCLE" selected>Motorcycle / Scooter (Safe carrying up to 60 kg)</option>
+                <option value="TOTO_CARGO">Toto / E-Rickshaw Cargo (Bulk load up to 250 kg)</option>
+              </select>
+            </div>
+
+            <button type="button" id="btn-submit-rider-ob" class="btn btn-primary btn-block" style="margin-top:14px;">
+              Apply as Delivery Partner
+            </button>
+          </form>
+        </div>`;
+    },
+
+    // 7. PRIVACY POLICY
+    getPrivacyHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">Privacy Policy</h1>
+            <div class="static-page-sub">Last updated: January 2026 | Operating jurisdiction: Kolkata, West Bengal</div>
+          </div>
+          <p class="static-paragraph">
+            Garia Rice Marketplace™ values your privacy. We collect only the minimal information necessary to deliver rice orders to your doorstep: customer name, contact phone number, and delivery street address.
+          </p>
+          <h2 class="static-section-heading">Data Storage & Zero Selling Policy</h2>
+          <p class="static-paragraph">
+            All transaction and order data are securely stored inside private Google Sheets databases operating on Google Apps Script servers. We do not sell, rent, or trade your phone number or address to third-party telemarketers.
+          </p>
+          <h2 class="static-section-heading">Rider Privacy Masking</h2>
+          <p class="static-paragraph">
+            In accordance with Section 32 of our operational framework, delivery couriers in the broadcast pool can only view your general locality. Your exact flat number and phone number remain masked until a verified courier officially accepts the delivery job.
+          </p>
+        </div>`;
+    },
+
+    // 8. TERMS & CONDITIONS
+    getTermsHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">Terms & Conditions</h1>
+            <div class="static-page-sub">Governing platform usage for buyers, sellers, and delivery couriers in Garia.</div>
+          </div>
+          <h2 class="static-section-heading">1. Marketplace Intermediary Role</h2>
+          <p class="static-paragraph">
+            Garia Rice Marketplace™ operates as an electronic intermediary connecting buyers, registered merchants, and independent delivery couriers. The marketplace does not own inventory, inspect milling batches, or set retail rice prices.
+          </p>
+          <h2 class="static-section-heading">2. Single-Seller Cart Policy</h2>
+          <p class="static-paragraph">
+            Each checkout order must contain products from one seller only to maintain transparent, honest delivery pricing and avoid split dispatches.
+          </p>
+        </div>`;
+    },
+
+    // 9. REFUND & CANCELLATION POLICY
+    getRefundPolicyHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">Refund & Cancellation Policy</h1>
+            <div class="static-page-sub">Clear protections for damaged bags, incorrect varieties, and weight disputes.</div>
+          </div>
+          <h2 class="static-section-heading">Inspection on Delivery</h2>
+          <p class="static-paragraph">
+            Customers have the right to inspect rice packaging at the doorstep in the presence of the courier. If bags are torn, damp, or contain the incorrect variety, you may reject the order on the spot with zero cancellation fee.
+          </p>
+          <h2 class="static-section-heading">Merchant Cancellation</h2>
+          <p class="static-paragraph">
+            If a merchant runs out of stock, they will reject the order within 15 minutes. The platform immediately alerts you so you can re-order from an alternative nearby seller with one click.
+          </p>
+        </div>`;
+    },
+
+    // 10. DELIVERY POLICY
+    getDeliveryPolicyHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">Transparent Delivery Policy</h1>
+            <div class="static-page-sub">Distance slabs and heavy weight surcharges.</div>
+          </div>
+          <h2 class="static-section-heading">Distance Pricing Slabs</h2>
+          <p class="static-paragraph">
+            Delivery charges are computed transparently before order placement:
+          </p>
+          <ul class="static-list">
+            <li><strong>0.0 km to 2.0 km (Base Slab):</strong> ₹25 flat charge.</li>
+            <li><strong>2.0 km to 4.0 km:</strong> ₹35 flat charge.</li>
+            <li><strong>4.0 km to 8.0 km:</strong> ₹50 flat charge.</li>
+          </ul>
+          <h2 class="static-section-heading">Bulky Weight Surcharge</h2>
+          <p class="static-paragraph">
+            Orders exceeding 25 kg incur an excess load fee of ₹1.50 per additional kilogram to compensate delivery couriers carrying heavy loads upstairs.
+          </p>
+        </div>`;
+    },
+
+    // 11. SELLER POLICY
+    getSellerPolicyHtml_() {
+      return `
+        <div class="static-doc-card">
+          <div class="static-header-box">
+            <h1 class="static-page-title">Seller Code of Conduct</h1>
+            <div class="static-page-sub">Standards for registered rice merchants in Garia.</div>
+          </div>
+          <ul class="static-list">
+            <li><strong>Accurate Labeling:</strong> Rice varieties (Miniket, Swarna, Ratna) must not be misrepresented.</li>
+            <li><strong>Honest Net Weights:</strong> All bags must match labeled weights within legal metrology tolerances.</li>
+            <li><strong>Prompt Readiness:</strong> Merchants must confirm orders within 15 minutes and pack bags within 30 minutes.</li>
+          </ul>
+        </div>`;
+    },
+
+    bindFaqAccordions_() {
+      document.querySelectorAll('.faq-question-btn').forEach(btn => {
+        btn.onclick = () => {
+          const body = btn.nextElementSibling;
+          if (body) {
+            body.classList.toggle('hidden');
+            const icon = btn.querySelector('span:last-child');
+            if (icon) icon.textContent = body.classList.contains('hidden') ? '+' : '−';
+          }
+        };
+      });
+    },
+
+    bindSellerOnboardingForm_() {
+      const btn = document.getElementById('btn-submit-seller-ob');
+      if (!btn) return;
+
+      btn.onclick = () => {
+        const bizName = document.getElementById('ob-seller-biz-name')?.value.trim();
+        const ownerName = document.getElementById('ob-seller-owner-name')?.value.trim();
+        const phone = document.getElementById('ob-seller-phone')?.value.trim();
+        const wa = document.getElementById('ob-seller-wa')?.value.trim() || phone;
+        const addr = document.getElementById('ob-seller-address')?.value.trim();
+        const locality = document.getElementById('ob-seller-locality')?.value;
+        const pincode = document.getElementById('ob-seller-pincode')?.value.trim();
+        const fssai = document.getElementById('ob-seller-fssai')?.value.trim();
+        const radius = parseFloat(document.getElementById('ob-seller-radius')?.value || 3.5);
+
+        if (!bizName || !ownerName || !addr) {
+          window.AppUI.showToast('Please fill all mandatory shop details.', 'error');
+          return;
+        }
+        if (phone.length !== 10) {
+          window.AppUI.showToast('Please enter a valid 10-digit mobile number.', 'error');
+          return;
+        }
+
+        window.AppUI.showLoader('Registering Merchant', 'Creating shop record...');
+        window.AppApi.call('submitSellerApplication', {
+          business_name: bizName,
+          owner_name: ownerName,
+          contact_phone: phone,
+          whatsapp_phone: wa,
+          address_line: addr,
+          locality: locality,
+          pincode: pincode,
+          fssai_number: fssai,
+          service_radius_km: radius
+        })
+        .then(res => {
+          window.AppUI.showToast(res.message, 'success');
+          // Navigate to seller portal
+          setTimeout(() => window.AppRouter.navigate('/seller'), 1200);
+        })
+        .catch(err => {
+          window.AppUI.showToast(err.error || 'Registration failed', 'error');
+        })
+        .finally(() => window.AppUI.hideLoader());
+      };
+    },
+
+    bindRiderOnboardingForm_() {
+      const btn = document.getElementById('btn-submit-rider-ob');
+      if (!btn) return;
+
+      btn.onclick = () => {
+        const name = document.getElementById('ob-rider-name')?.value.trim();
+        const phone = document.getElementById('ob-rider-phone')?.value.trim();
+        const vehicle = document.getElementById('ob-rider-vehicle')?.value;
+
+        if (!name || phone.length !== 10) {
+          window.AppUI.showToast('Please fill all mandatory fields with a valid 10-digit phone number.', 'error');
+          return;
+        }
+
+        window.AppUI.showLoader('Registering Courier', 'Setting vehicle capacity...');
+        window.AppApi.call('submitRiderApplication', {
+          full_name: name,
+          phone: phone,
+          vehicle_type: vehicle
+        })
+        .then(res => {
+          window.AppUI.showToast(res.message, 'success');
+          setTimeout(() => window.AppRouter.navigate('/rider'), 1200);
+        })
+        .catch(err => {
+          window.AppUI.showToast(err.error || 'Application failed', 'error');
+        })
+        .finally(() => window.AppUI.hideLoader());
+      };
+    }
+  };
+
+  window.StaticViewController = StaticViewController;
+  StaticViewController.init();
+
+})(window);
+</script>
