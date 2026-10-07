@@ -1,0 +1,399 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - comparison_table.html
+     Master Multi-Seller Comparison Matrix Component (Sections 3 & 16)
+     ============================================================================== -->
+
+<div id="comparison-component-root" class="comparison-component-root">
+  <!-- Dynamic Mount for Comparison Matrix -->
+  <div id="comparison-matrix-mount" class="comparison-matrix-mount">
+    <!-- Rendered dynamically by window.ComparisonComponent.render() -->
+  </div>
+</div>
+
+<!-- ==============================================================================
+     COMPARISON MATRIX INLINE COMPONENT STYLES
+     ============================================================================== -->
+<style>
+.comparison-component-root {
+  width: 100%;
+  margin: 16px 0;
+}
+
+.comparison-wrapper {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.comparison-header-box {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comparison-headline {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comparison-subtext {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* Desktop Comparison Table */
+.comparison-table-desktop {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.comparison-table-desktop th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--color-border);
+  text-align: left;
+}
+
+.comparison-table-desktop td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.comparison-row-best {
+  background-color: #fefce8; /* Soft golden tint for Best Value */
+  font-weight: 600;
+}
+
+.best-value-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f59e0b;
+  color: #78350f;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  margin-top: 4px;
+}
+
+.rating-star-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: #e8f5e9;
+  color: #1b4332;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+/* Mobile Comparison Card Stack (< 768px) */
+.comparison-cards-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.mobile-compare-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.mobile-compare-card.is-best-value {
+  border: 2px solid #f59e0b;
+  background-color: #fffbeb;
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.mobile-seller-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.mobile-seller-loc {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.mobile-card-price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: #f8fafc;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  gap: 4px;
+}
+
+.mobile-price-col .label {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.mobile-price-col .val {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.mobile-price-col.total-col .val {
+  color: var(--color-primary);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* Skeleton Loading State */
+.comparison-skeleton {
+  padding: 20px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.skeleton-spinner {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+/* Empty State */
+.comparison-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  background-color: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border);
+}
+</style>
+
+<!-- ==============================================================================
+     COMPARISON MATRIX CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  const ComparisonComponent = {
+    /**
+     * Fetches and renders multi-seller comparison for equivalent rice offerings.
+     * @param {string} variety - Target rice variety (e.g. 'Miniket').
+     * @param {number} packSizeKg - Target weight (e.g. 25).
+     * @param {string} [customerLocality=null] - Delivery location.
+     * @param {string} [containerId='comparison-matrix-mount'] - DOM mount ID.
+     */
+    render(variety, packSizeKg, customerLocality = null, containerId = 'comparison-matrix-mount') {
+      const mount = document.getElementById(containerId);
+      if (!mount) return;
+
+      const locality = customerLocality || (window.AppStore ? window.AppStore.state.selectedLocality : 'Garia Station');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      // 1. Render Skeleton Loader
+      mount.innerHTML = `
+        <div class="comparison-wrapper">
+          <div class="comparison-skeleton">
+            <div class="skeleton-spinner">⚖️</div>
+            <div>Comparing local sellers in Garia for ${variety} (${packSizeKg} kg)...</div>
+          </div>
+        </div>`;
+
+      // 2. Fetch Comparison Data via RPC Bridge
+      window.AppApi.call('getSellerComparison', {
+        variety: variety,
+        pack_size_kg: packSizeKg,
+        customer_locality: locality
+      })
+      .then(res => {
+        const comparisons = res.comparisons || [];
+
+        if (comparisons.length === 0) {
+          mount.innerHTML = `
+            <div class="comparison-wrapper">
+              <div class="comparison-header-box">
+                <div class="comparison-headline">⚖️ Compare Sellers: ${variety} (${packSizeKg} kg)</div>
+                <div class="comparison-subtext">Delivering to ${locality}</div>
+              </div>
+              <div class="comparison-empty">
+                Currently, only one local seller has listed this exact pack size in Garia. Browse all products to see alternative sizes.
+              </div>
+            </div>`;
+          return;
+        }
+
+        // 3. Build Desktop Table HTML
+        let desktopRows = '';
+        comparisons.forEach(item => {
+          const rowClass = item.is_best_value ? 'comparison-row-best' : '';
+          const bestValueTag = item.is_best_value ? '<div class="best-value-pill">🏆 BEST DELIVERED VALUE</div>' : '';
+
+          desktopRows += `
+            <tr class="${rowClass}">
+              <td>
+                <div style="font-weight:700;color:var(--color-text-main);">${escapeHtml(item.seller_business_name)}</div>
+                <div style="font-size:12px;color:#64748b;">${escapeHtml(item.seller_locality)}</div>
+                ${bestValueTag}
+              </td>
+              <td style="font-weight:700;">${curr}${item.rice_price_inr}</td>
+              <td style="color:#64748b;">+ ${curr}${item.delivery_fee_inr}</td>
+              <td style="font-size:16px;font-weight:800;color:var(--color-primary);">${curr}${item.total_delivered_inr}</td>
+              <td style="font-size:13px;color:#475569;">~ ${item.approx_distance_km} km</td>
+              <td><span class="rating-star-badge">★ ${item.seller_rating}</span></td>
+              <td>
+                <button type="button" class="btn btn-primary btn-sm btn-select-compare" data-product-id="${item.product_id}" data-seller-id="${item.seller_id}" data-seller-name="${escapeHtml(item.seller_business_name)}" data-price="${item.rice_price_inr}" data-name="${escapeHtml(variety + ' Rice (' + packSizeKg + 'kg)')}" data-pack="${packSizeKg}">
+                  Select & Add
+                </button>
+              </td>
+            </tr>`;
+        });
+
+        // 4. Build Mobile Cards HTML (< 768px)
+        let mobileCards = '';
+        comparisons.forEach(item => {
+          const cardClass = item.is_best_value ? 'mobile-compare-card is-best-value' : 'mobile-compare-card';
+          const bestValueBadge = item.is_best_value ? '<div class="best-value-pill" style="align-self:flex-start;">🏆 BEST DELIVERED VALUE</div>' : '';
+
+          mobileCards += `
+            <div class="${cardClass}">
+              ${bestValueBadge}
+              <div class="mobile-card-top">
+                <div>
+                  <div class="mobile-seller-name">${escapeHtml(item.seller_business_name)}</div>
+                  <div class="mobile-seller-loc">📍 ${escapeHtml(item.seller_locality)} (~ ${item.approx_distance_km} km)</div>
+                </div>
+                <span class="rating-star-badge">★ ${item.seller_rating}</span>
+              </div>
+
+              <div class="mobile-card-price-grid">
+                <div class="mobile-price-col">
+                  <span class="label">Rice</span>
+                  <span class="val">${curr}${item.rice_price_inr}</span>
+                </div>
+                <div class="mobile-price-col">
+                  <span class="label">Delivery</span>
+                  <span class="val">+ ${curr}${item.delivery_fee_inr}</span>
+                </div>
+                <div class="mobile-price-col total-col">
+                  <span class="label">Delivered</span>
+                  <span class="val">${curr}${item.total_delivered_inr}</span>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary btn-block btn-select-compare" data-product-id="${item.product_id}" data-seller-id="${item.seller_id}" data-seller-name="${escapeHtml(item.seller_business_name)}" data-price="${item.rice_price_inr}" data-name="${escapeHtml(variety + ' Rice (' + packSizeKg + 'kg)')}" data-pack="${packSizeKg}">
+                Order from this Seller
+              </button>
+            </div>`;
+        });
+
+        // 5. Mount Assembled Markup
+        mount.innerHTML = `
+          <div class="comparison-wrapper">
+            <div class="comparison-header-box">
+              <div class="comparison-headline">⚖️ Multi-Seller Delivered Price Comparison</div>
+              <div class="comparison-subtext">Comparing verified Garia sellers for <strong>${escapeHtml(variety)} (${packSizeKg} kg bag)</strong> delivering to <strong>${escapeHtml(locality)}</strong></div>
+            </div>
+
+            <!-- Desktop View Table -->
+            <table class="comparison-table-desktop">
+              <thead>
+                <tr>
+                  <th>Seller & Locality</th>
+                  <th>Rice Price</th>
+                  <th>Delivery</th>
+                  <th>Total Delivered</th>
+                  <th>Approx. Distance</th>
+                  <th>Rating</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${desktopRows}
+              </tbody>
+            </table>
+
+            <!-- Mobile View Stacked Cards -->
+            <div class="comparison-cards-mobile">
+              ${mobileCards}
+            </div>
+          </div>`;
+
+        // 6. Bind 1-Click Cart Addition
+        mount.querySelectorAll('.btn-select-compare').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const target = e.currentTarget;
+            const productObj = {
+              product_id: target.getAttribute('data-product-id'),
+              seller_id: target.getAttribute('data-seller-id'),
+              seller_name: target.getAttribute('data-seller-name'),
+              name_en: target.getAttribute('data-name'),
+              variety: variety,
+              pack_size_kg: parseFloat(target.getAttribute('data-pack')),
+              price_inr: parseFloat(target.getAttribute('data-price'))
+            };
+
+            if (window.AppCart) {
+              window.AppCart.addItem(productObj, 1);
+            }
+          });
+        });
+
+      })
+      .catch(err => {
+        mount.innerHTML = `
+          <div class="comparison-wrapper">
+            <div class="comparison-empty" style="color:var(--color-danger);">
+              Failed to load seller comparison: ${escapeHtml(err.error || 'Server connection error')}
+            </div>
+          </div>`;
+      });
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.ComparisonComponent = ComparisonComponent;
+  window.renderComparisonMatrix = ComparisonComponent.render.bind(ComparisonComponent);
+
+})(window);
+</script>
