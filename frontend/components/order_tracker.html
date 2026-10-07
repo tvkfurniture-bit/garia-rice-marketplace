@@ -1,0 +1,672 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - order_tracker.html
+     Master Live Order Milestone Progress Bar & Status Tracker (Sections 8 & 33)
+     ============================================================================== -->
+
+<div id="order-tracker-component-root" class="order-tracker-component-root">
+  <!-- Dynamic Mount for Live Order Tracking -->
+  <div id="order-tracker-mount" class="order-tracker-mount">
+    <!-- Rendered dynamically by window.OrderTrackerComponent.render() -->
+  </div>
+</div>
+
+<!-- ==============================================================================
+     ORDER TRACKER INLINE COMPONENT STYLES
+     ============================================================================== -->
+<style>
+.order-tracker-component-root {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.tracker-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+
+.tracker-top-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+  gap: 12px;
+}
+
+.tracker-order-id-block h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.tracker-order-date {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.tracker-status-pill {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-active-pill {
+  background-color: #e8f5e9;
+  color: #1b4332;
+  border: 1px solid #c8e6c9;
+}
+
+.status-delivered-pill {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.status-cancelled-pill {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* ==============================================================================
+   PROGRESS TRACKER TIMELINE (RESPONSIVE)
+   ============================================================================== */
+
+/* Desktop Horizontal Tracker (>= 768px) */
+.timeline-horizontal-desktop {
+  display: none;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  margin: 36px 0 28px 0;
+  padding: 0 10px;
+}
+
+.timeline-horizontal-desktop::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 30px;
+  right: 30px;
+  height: 3px;
+  background-color: #e2e8f0;
+  z-index: 1;
+}
+
+.h-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  width: 13%;
+}
+
+.h-step-node {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 3px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  transition: all 0.25s ease;
+}
+
+.h-step-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 8px;
+  line-height: 1.2;
+}
+
+.h-step-time {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+/* Horizontal Completed State */
+.h-step-item.is-completed .h-step-node {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+  color: #ffffff;
+}
+.h-step-item.is-completed .h-step-label {
+  color: var(--color-text-main);
+}
+
+/* Horizontal Active State */
+.h-step-item.is-active .h-step-node {
+  background-color: #ffffff;
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-light);
+  box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.2);
+}
+.h-step-item.is-active .h-step-label {
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+/* Mobile Vertical Tracker (< 768px) */
+.timeline-vertical-mobile {
+  display: flex;
+  flex-direction: column;
+  margin: 24px 0 16px 0;
+  position: relative;
+  padding-left: 8px;
+}
+
+.v-step-item {
+  display: flex;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.v-step-item:last-child {
+  padding-bottom: 0;
+}
+
+.v-step-item::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 13px;
+  bottom: 0;
+  width: 2px;
+  background-color: #e2e8f0;
+  z-index: 1;
+}
+
+.v-step-item:last-child::before {
+  display: none;
+}
+
+.v-step-node {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 3px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.v-step-content {
+  flex-grow: 1;
+}
+
+.v-step-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.v-step-time {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Vertical Active/Completed States */
+.v-step-item.is-completed .v-step-node {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+  color: #ffffff;
+}
+.v-step-item.is-completed .v-step-label {
+  color: var(--color-text-main);
+}
+.v-step-item.is-active .v-step-node {
+  background-color: #ffffff;
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-light);
+  box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.2);
+}
+.v-step-item.is-active .v-step-label {
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+@media (min-width: 768px) {
+  .timeline-horizontal-desktop { display: flex; }
+  .timeline-vertical-mobile { display: none; }
+}
+
+/* Order Summary Box */
+.tracker-summary-box {
+  background-color: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.summary-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.summary-body {
+  font-size: 14px;
+  color: var(--color-text-main);
+  line-height: 1.5;
+}
+
+/* Review Invitation Banner */
+.tracker-review-banner {
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.review-cta-btn {
+  background-color: #059669;
+  color: #ffffff;
+  font-weight: 700;
+  margin-top: 10px;
+}
+.review-cta-btn:hover { background-color: #047857; }
+
+/* Support & Actions Row */
+.tracker-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.wa-support-btn {
+  background-color: #25d366;
+  color: #ffffff;
+  font-weight: 700;
+}
+.wa-support-btn:hover { background-color: #128c7e; }
+</style>
+
+<!-- ==============================================================================
+     ORDER TRACKER CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  // Canonical 7-Milestone Lifecycle Sequence (Section 8)
+  const MILESTONES = [
+    { key: 'PLACED', label: 'Order Placed', icon: '1' },
+    { key: 'SELLER_CONFIRMED', label: 'Seller Confirmed', icon: '2' },
+    { key: 'READY_FOR_PICKUP', label: 'Packed & Ready', icon: '3' },
+    { key: 'RIDER_ACCEPTED', label: 'Rider Assigned', icon: '4' },
+    { key: 'PICKED_UP', label: 'Picked Up', icon: '5' },
+    { key: 'OUT_FOR_DELIVERY', label: 'Out for Delivery', icon: '6' },
+    { key: 'DELIVERED', label: 'Delivered', icon: '7' }
+  ];
+
+  const OrderTrackerComponent = {
+    /**
+     * Renders live milestone tracker for a given Order ID.
+     * @param {string} orderId - Canonical Order ID.
+     * @param {string} [containerId='order-tracker-mount'] - Target container ID.
+     */
+    render(orderId, containerId = 'order-tracker-mount') {
+      const mount = document.getElementById(containerId);
+      if (!mount) return;
+
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      // 1. Loading Skeleton
+      mount.innerHTML = `
+        <div class="tracker-card">
+          <div style="text-align:center;padding:32px 16px;color:#64748b;">
+            <div style="font-size:32px;animation:pulse 1s infinite;">🌾</div>
+            <div style="font-size:16px;font-weight:700;margin-top:8px;">Fetching Order ${escapeHtml(orderId)}...</div>
+            <div style="font-size:13px;color:#94a3b8;">Connecting to Garia Rice Marketplace live tracking...</div>
+          </div>
+        </div>`;
+
+      // 2. Fetch Order Data via RPC
+      window.AppApi.call('getOrderDetails', { order_id: orderId })
+        .then(order => {
+          this.renderOrderContent_(mount, order, curr);
+        })
+        .catch(err => {
+          // If unauthenticated, fallback to public phone-verified tracking prompt
+          this.renderPublicTrackingFallback_(mount, orderId, err.error);
+        });
+    },
+
+    /**
+     * Internal: Renders populated order timeline and summary.
+     * @private
+     */
+    renderOrderContent_(mount, order, curr) {
+      const currentStatus = order.current_status;
+      const statusTimeline = order.status_timeline || [];
+
+      // Determine active milestone index in sequence
+      let activeIndex = MILESTONES.findIndex(m => m.key === currentStatus);
+      if (activeIndex === -1) {
+        if (currentStatus === 'PACKING') activeIndex = 1;
+        else if (currentStatus === 'RIDER_ASSIGNED') activeIndex = 2;
+        else if (currentStatus === 'CUSTOMER_CONFIRMED' || currentStatus === 'REVIEW_REQUESTED' || currentStatus === 'COMPLETED') activeIndex = 6;
+        else activeIndex = 0; // Default to placed
+      }
+
+      const isDelivered = currentStatus === 'DELIVERED' || currentStatus === 'COMPLETED';
+      const isCancelled = currentStatus.includes('CANCELLED') || currentStatus.includes('REJECTED');
+
+      // Helper to find recorded milestone timestamp
+      const getMilestoneTime = (key) => {
+        const found = statusTimeline.find(t => t.status === key);
+        if (found && found.timestamp) {
+          try {
+            const d = new Date(found.timestamp);
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          } catch (e) { return ''; }
+        }
+        return '';
+      };
+
+      // 3. Build Desktop Horizontal Milestone HTML
+      let hStepsHtml = '';
+      MILESTONES.forEach((m, idx) => {
+        let stepClass = '';
+        let nodeIcon = m.icon;
+
+        if (idx < activeIndex) {
+          stepClass = 'is-completed';
+          nodeIcon = '✓';
+        } else if (idx === activeIndex) {
+          stepClass = isDelivered ? 'is-completed' : 'is-active';
+          nodeIcon = isDelivered ? '✓' : '●';
+        }
+
+        const timeStr = getMilestoneTime(m.key);
+
+        hStepsHtml += `
+          <div class="h-step-item ${stepClass}">
+            <div class="h-step-node">${nodeIcon}</div>
+            <div class="h-step-label">${m.label}</div>
+            <div class="h-step-time">${timeStr}</div>
+          </div>`;
+      });
+
+      // 4. Build Mobile Vertical Milestone HTML
+      let vStepsHtml = '';
+      MILESTONES.forEach((m, idx) => {
+        let stepClass = '';
+        let nodeIcon = m.icon;
+
+        if (idx < activeIndex) {
+          stepClass = 'is-completed';
+          nodeIcon = '✓';
+        } else if (idx === activeIndex) {
+          stepClass = isDelivered ? 'is-completed' : 'is-active';
+          nodeIcon = isDelivered ? '✓' : '●';
+        }
+
+        const timeStr = getMilestoneTime(m.key);
+
+        vStepsHtml += `
+          <div class="v-step-item ${stepClass}">
+            <div class="v-step-node">${nodeIcon}</div>
+            <div class="v-step-content">
+              <div class="v-step-label">${m.label}</div>
+              <div class="v-step-time">${timeStr}</div>
+            </div>
+          </div>`;
+      });
+
+      // 5. Items Summary String
+      const itemsListHtml = (order.items || []).map(i =>
+        `<div><strong>${i.quantity}x</strong> ${escapeHtml(i.name)} (${i.pack_size_kg} kg) — ${curr}${i.line_total_inr}</div>`
+      ).join('');
+
+      // 6. Review Prompt Banner (if delivered)
+      let reviewBannerHtml = '';
+      if (isDelivered) {
+        reviewBannerHtml = `
+          <div class="tracker-review-banner">
+            <h3 style="margin:0 0 6px 0;color:#065f46;font-size:16px;">How was your rice delivery?</h3>
+            <p style="margin:0;font-size:13px;color:#047857;">Help other Garia families by sharing a quick verified review.</p>
+            <button type="button" class="btn review-cta-btn" onclick="window.OrderTrackerComponent.promptReview('${escapeHtml(order.order_id)}')">
+              ⭐⭐⭐⭐⭐ Leave a 1-Minute Review
+            </button>
+          </div>`;
+      }
+
+      // 7. Prefilled WhatsApp Help URL
+      const waSupportUrl = `https://wa.me/919830000000?text=${encodeURIComponent('Hello Garia Rice Support, I have an inquiry about my order: ' + order.order_id)}`;
+
+      // 8. Assemble Master Card
+      mount.innerHTML = `
+        <div class="tracker-card">
+          <!-- Top Header -->
+          <div class="tracker-top-header">
+            <div class="tracker-order-id-block">
+              <h2>Order ${escapeHtml(order.order_id)}</h2>
+              <div class="tracker-order-date">Placed: ${new Date(order.created_at).toLocaleDateString()}</div>
+            </div>
+            <div>
+              <span class="tracker-status-pill ${isDelivered ? 'status-delivered-pill' : isCancelled ? 'status-cancelled-pill' : 'status-active-pill'}">
+                ${escapeHtml(order.current_status)}
+              </span>
+            </div>
+          </div>
+
+          <!-- Desktop Horizontal Timeline -->
+          <div class="timeline-horizontal-desktop">
+            ${hStepsHtml}
+          </div>
+
+          <!-- Mobile Vertical Timeline -->
+          <div class="timeline-vertical-mobile">
+            ${vStepsHtml}
+          </div>
+
+          <!-- Review Invitation (When Delivered) -->
+          ${reviewBannerHtml}
+
+          <!-- Order Summary Details Box -->
+          <div class="tracker-summary-box">
+            <div class="summary-grid">
+              <div>
+                <div class="summary-heading">Seller & Fulfillment:</div>
+                <div class="summary-body">
+                  <strong>${escapeHtml(order.seller.business_name)}</strong><br>
+                  📍 ${escapeHtml(order.seller.locality)} (~ ${order.approx_distance_km} km)
+                </div>
+              </div>
+
+              <div>
+                <div class="summary-heading">Delivery Destination:</div>
+                <div class="summary-body">
+                  ${escapeHtml(order.delivery_address.address_line || '')}<br>
+                  ${escapeHtml(order.delivery_address.locality || '')} ${escapeHtml(order.delivery_address.pincode || '')}
+                </div>
+              </div>
+
+              <div>
+                <div class="summary-heading">Ordered Rice:</div>
+                <div class="summary-body">
+                  ${itemsListHtml || 'Rice Selection'}
+                </div>
+              </div>
+
+              <div>
+                <div class="summary-heading">Payment Breakdown:</div>
+                <div class="summary-body">
+                  Subtotal: ${curr}${order.subtotal_inr}<br>
+                  Delivery Fee: ${curr}${order.delivery_fee_inr}<br>
+                  <strong style="color:var(--color-primary);font-size:16px;">Total Payable: ${curr}${order.total_amount_inr}</strong>
+                  <div style="font-size:12px;color:#64748b;">Method: ${escapeHtml(order.payment_method)} (${escapeHtml(order.payment_status)})</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Support & Help Action Bar -->
+          <div class="tracker-actions-row">
+            <div style="font-size:13px;color:#64748b;">Need help with this order?</div>
+            <a href="${waSupportUrl}" target="_blank" rel="noopener" class="btn wa-support-btn">
+              💬 WhatsApp Support
+            </a>
+          </div>
+        </div>`;
+    },
+
+    /**
+     * Fallback for anonymous users: Prompt for last 4 digits of phone number.
+     * @private
+     */
+    renderPublicTrackingFallback_(mount, orderId, errorMsg) {
+      mount.innerHTML = `
+        <div class="tracker-card" style="text-align:center;padding:32px 16px;">
+          <h2 style="color:var(--color-primary);margin-bottom:8px;">Track Order ${escapeHtml(orderId)}</h2>
+          <p style="font-size:14px;color:#475569;margin-bottom:20px;">
+            To view order details without signing in, please verify the last 4 digits of your mobile number:
+          </p>
+          <div style="max-width:280px;margin:0 auto 16px auto;">
+            <input type="tel" id="public-phone-last4" class="form-input text-center" placeholder="e.g. 1234" maxlength="4" style="font-size:18px;letter-spacing:2px;">
+          </div>
+          <button type="button" class="btn btn-primary" onclick="window.OrderTrackerComponent.verifyPublicTrack('${escapeHtml(orderId)}')">
+            Verify & Track Order
+          </button>
+        </div>`;
+    },
+
+    verifyPublicTrack(orderId) {
+      const input = document.getElementById('public-phone-last4');
+      const last4 = input ? input.value.trim() : '';
+
+      if (last4.length === 4) {
+        window.AppApi.call('trackOrderPublic', { order_id: orderId, phone_last_4: last4 })
+          .then(data => {
+            // Render with lightweight data
+            window.AppUI.showToast('Phone verified! Loading order timeline...', 'success');
+            const mockFullOrder = {
+              order_id: data.order_id,
+              current_status: data.current_status,
+              total_amount_inr: data.total_amount_inr,
+              seller: { business_name: data.seller_business_name, locality: data.seller_locality },
+              delivery_address: { locality: data.seller_locality },
+              items: [],
+              status_timeline: data.status_timeline,
+              created_at: new Date().toISOString()
+            };
+            this.renderOrderContent_(document.getElementById('order-tracker-mount'), mockFullOrder, '₹');
+          })
+          .catch(err => {
+            window.AppUI.showToast(err.error || 'Verification failed', 'error');
+          });
+      } else {
+        window.AppUI.showToast('Please enter the last 4 digits of your phone number.', 'error');
+      }
+    },
+
+    promptReview(orderId) {
+      window.AppUI.showModal(
+        'Leave a Verified Review',
+        `<p style="margin-bottom:12px;font-size:14px;color:#475569;">How was the rice quality and delivery service for Order <strong>${orderId}</strong>?</p>
+         <div class="form-group">
+           <label class="form-label">Overall Rating (1 to 5 Stars):</label>
+           <select id="review-stars-select" class="form-select">
+             <option value="5">⭐⭐⭐⭐⭐ (5/5 Excellent)</option>
+             <option value="4">⭐⭐⭐⭐ (4/5 Very Good)</option>
+             <option value="3">⭐⭐⭐ (3/5 Average)</option>
+             <option value="2">⭐⭐ (2/5 Below Average)</option>
+             <option value="1">⭐ (1/5 Poor)</option>
+           </select>
+         </div>
+         <div class="form-group">
+           <label class="form-label">Your Comments:</label>
+           <textarea id="review-comment-input" class="form-textarea" placeholder="Describe the grain length, cooking texture, and delivery promptness..." rows="3"></textarea>
+         </div>`,
+        () => {
+          const stars = parseInt(document.getElementById('review-stars-select').value, 10);
+          const comment = document.getElementById('review-comment-input').value.trim();
+
+          window.AppUI.showLoader('Submitting Review', 'Recording feedback...');
+          window.AppApi.call('submitOrderReview', {
+            order_id: orderId,
+            overall_rating: stars,
+            rice_quality_rating: stars,
+            delivery_rating: stars,
+            review_text: comment
+          })
+          .then(res => {
+            window.AppUI.showToast(res.message || 'Review submitted successfully!', 'success');
+            // Re-render tracker
+            this.render(orderId);
+          })
+          .catch(err => {
+            window.AppUI.showToast(err.error || 'Failed to submit review', 'error');
+          })
+          .finally(() => window.AppUI.hideLoader());
+        },
+        'Submit Review'
+      );
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.OrderTrackerComponent = OrderTrackerComponent;
+  window.renderOrderTracker = OrderTrackerComponent.render.bind(OrderTrackerComponent);
+
+})(window);
+</script>
