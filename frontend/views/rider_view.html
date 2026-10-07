@@ -1,0 +1,629 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - rider_view.html
+     Master Delivery Partner Portal & Job Dispatch Dashboard (Sections 30, 31, 32)
+     ============================================================================== -->
+
+<div class="rider-view-container">
+
+  <!-- ============================================================================
+       MODE A: COURIER LOGIN GATING (If Unauthenticated)
+       ============================================================================ -->
+  <div id="rider-login-panel" class="rider-login-card card text-center hidden">
+    <div style="font-size:36px;margin-bottom:8px;">🚲</div>
+    <h1 style="color:var(--color-primary);font-size:22px;margin-bottom:6px;">Delivery Partner Portal</h1>
+    <p style="color:#64748b;font-size:14px;max-width:440px;margin:0 auto 20px auto;">
+      Enter your registered mobile number to access your delivery dashboard, view available heavy rice delivery jobs in Garia, and track daily earnings.
+    </p>
+
+    <div style="max-width:320px;margin:0 auto 16px auto;">
+      <div class="form-group text-left">
+        <label class="form-label" for="rider-login-phone">Registered Mobile Number (+91) *</label>
+        <input type="tel" id="rider-login-phone" class="form-input text-center" placeholder="e.g. 9830044444" maxlength="10">
+      </div>
+      <button type="button" id="btn-rider-login" class="btn btn-primary btn-block">
+        Open Courier Dashboard
+      </button>
+    </div>
+
+    <p style="font-size:13px;color:#64748b;margin:0;">
+      Want to deliver with us? <a href="#/become-a-delivery-partner" style="color:var(--color-primary-light);font-weight:700;">Sign up as Delivery Partner</a>
+    </p>
+  </div>
+
+  <!-- ============================================================================
+       MODE B: ACTIVE RIDER DASHBOARD (When Authenticated)
+       ============================================================================ -->
+  <div id="rider-dashboard-panel" class="rider-dashboard-panel hidden">
+
+    <!-- Top Courier Profile & Availability Bar -->
+    <div class="card rider-profile-bar">
+      <div class="rider-bar-left">
+        <div class="flex items-center gap-3">
+          <span style="font-size:28px;">🛵</span>
+          <div>
+            <h1 id="rider-name-display" class="rider-dash-title">Courier Name</h1>
+            <div id="rider-meta-display" class="rider-dash-sub">Motorcycle Courier | Max Payload: 60 kg</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rider-bar-right">
+        <!-- Availability Toggle Switch -->
+        <div class="rider-status-toggle-box">
+          <span id="rider-duty-status-label" class="duty-status-text">AVAILABLE</span>
+          <button type="button" id="btn-toggle-rider-duty" class="btn btn-sm btn-outline">Change Status</button>
+        </div>
+        <button type="button" id="btn-rider-logout" class="btn btn-sm btn-secondary">Logout</button>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="rider-kpis-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Lifetime Deliveries</div>
+        <div id="rider-total-deliveries" class="kpi-value text-primary">0</div>
+        <div class="kpi-sub">Completed orders</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Total Earnings</div>
+        <div id="rider-total-earnings" class="kpi-value text-success">₹0</div>
+        <div class="kpi-sub">Delivery compensation</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Courier Rating</div>
+        <div id="rider-rating" class="kpi-value" style="color:#d97706;">★ 5.0</div>
+        <div class="kpi-sub">Customer satisfaction</div>
+      </div>
+    </div>
+
+    <!-- ACTIVE CLAIMED DELIVERY (If Currently Assigned) -->
+    <section id="rider-active-job-section" class="card rider-active-job-card hidden">
+      <div class="active-job-header">
+        <div>
+          <span class="badge" style="background-color:#e8f5e9;color:#1b4332;font-weight:700;">ACTIVE IN-TRANSIT JOB</span>
+          <h2 id="active-job-order-id" style="font-size:18px;font-weight:800;color:var(--color-primary);margin:4px 0 0 0;">Order: Loading...</h2>
+        </div>
+        <div id="active-job-payout" style="font-size:18px;font-weight:900;color:var(--color-success);">+ ₹0.00</div>
+      </div>
+
+      <!-- Pick Up from Seller Details -->
+      <div class="transit-location-box pickup-box">
+        <div class="box-tag">1. PICK UP FROM SELLER:</div>
+        <div id="active-job-pickup-shop" style="font-size:15px;font-weight:700;color:var(--color-text-main);">Shop Name</div>
+        <div id="active-job-pickup-address" style="font-size:13px;color:#64748b;">Address, Locality</div>
+        <div id="active-job-pickup-phone" style="font-size:13px;color:#0369a1;margin-top:4px;">📞 Call Shop: ...</div>
+      </div>
+
+      <!-- Deliver to Customer Details (Unlocked upon claim) -->
+      <div class="transit-location-box drop-box">
+        <div class="box-tag">2. DELIVER TO CUSTOMER:</div>
+        <div id="active-job-drop-address" style="font-size:15px;font-weight:700;color:var(--color-text-main);">Address, Landmark</div>
+        <div id="active-job-drop-locality" style="font-size:13px;color:#64748b;">Garia Locality, PIN</div>
+        <div id="active-job-drop-payment" class="cash-collect-highlight">
+          💵 Collect from Customer: ₹0.00 (COD)
+        </div>
+      </div>
+
+      <!-- Progressive Milestone Buttons (Section 31) -->
+      <div class="active-job-actions-row">
+        <button type="button" id="btn-job-picked-up" class="btn btn-primary btn-block">
+          📦 PICKED UP RICE BAGS (At Shop)
+        </button>
+        <button type="button" id="btn-job-out-for-delivery" class="btn btn-primary btn-block hidden" style="background-color:#0369a1;">
+          🛵 OUT FOR DELIVERY (En Route)
+        </button>
+        <button type="button" id="btn-job-delivered" class="btn btn-primary btn-block hidden" style="background-color:var(--color-success);">
+          ✓ DELIVERED & COLLECTED PAYMENT
+        </button>
+      </div>
+    </section>
+
+    <!-- AVAILABLE JOBS BROADCAST POOL (Section 32) -->
+    <section class="card rider-jobs-section">
+      <div class="rider-section-header">
+        <div>
+          <h2 class="rider-section-title">📦 Open Delivery Jobs in Garia</h2>
+          <p class="rider-section-sub">Orders packed by merchants waiting for courier pickup. Filtered by your vehicle carrying capacity.</p>
+        </div>
+      </div>
+
+      <div id="rider-jobs-feed-mount" class="rider-jobs-feed-mount">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+<!-- ==============================================================================
+     RIDER VIEW INLINE STYLES
+     ============================================================================== -->
+<style>
+.rider-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.rider-login-card {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 40px 24px;
+}
+
+/* Profile Bar */
+.rider-profile-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  gap: 16px;
+}
+
+.rider-dash-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.rider-dash-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.rider-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rider-status-toggle-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+}
+
+.duty-status-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+/* 3-Card KPI Grid */
+.rider-kpis-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 600px) {
+  .rider-kpis-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Active In-Transit Job Card */
+.rider-active-job-card {
+  border: 2px solid var(--color-primary-light);
+  background-color: #ffffff;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.active-job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.transit-location-box {
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pickup-box {
+  background-color: #f8fafc;
+  border-left: 4px solid var(--color-primary);
+}
+
+.drop-box {
+  background-color: #fefce8;
+  border-left: 4px solid #f59e0b;
+}
+
+.box-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.cash-collect-highlight {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed #fde68a;
+  font-size: 15px;
+  font-weight: 800;
+  color: #92400e;
+}
+
+.active-job-actions-row {
+  margin-top: 8px;
+}
+
+/* Jobs Broadcast Pool Feed */
+.rider-jobs-section {
+  padding: 24px;
+}
+
+.rider-section-header {
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rider-section-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.rider-section-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.rider-job-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.15s ease;
+}
+
+.rider-job-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.rider-job-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+@media (min-width: 600px) {
+  .rider-job-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.job-payout-text {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--color-success);
+}
+</style>
+
+<!-- ==============================================================================
+     RIDER VIEW CONTROLLER
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  let currentRiderDashboard = null;
+
+  const RiderViewController = {
+    init() {
+      if (window.AppRouter) {
+        const handler = () => this.render();
+        window.AppRouter.register('rider', handler);
+        window.AppRouter.register('rider-portal', handler);
+      }
+
+      this.bindRiderEvents_();
+    },
+
+    render() {
+      const riderViewEl = document.getElementById('view-rider');
+      const loginPanel = document.getElementById('rider-login-panel');
+      const dashPanel = document.getElementById('rider-dashboard-panel');
+
+      if (riderViewEl) riderViewEl.classList.remove('hidden');
+
+      const token = window.AppStore ? window.AppStore.state.authToken : null;
+
+      if (!token) {
+        if (loginPanel) loginPanel.classList.remove('hidden');
+        if (dashPanel) dashPanel.classList.add('hidden');
+        return;
+      }
+
+      if (loginPanel) loginPanel.classList.add('hidden');
+      if (dashPanel) dashPanel.classList.remove('hidden');
+
+      this.fetchRiderDashboard_();
+    },
+
+    fetchRiderDashboard_() {
+      window.AppUI.showLoader('Loading Rider Portal', 'Fetching jobs matching vehicle payload...');
+
+      // 1. Fetch Courier Profile & Active Job
+      window.AppApi.call('getRiderDashboard')
+        .then(data => {
+          currentRiderDashboard = data;
+          this.populateProfileBar_(data.profile);
+          this.populateActiveJob_(data.active_job);
+
+          // 2. Fetch Open Broadcast Jobs Pool
+          return window.AppApi.call('getRiderJobs');
+        })
+        .then(jobsData => {
+          this.populateJobsFeed_(jobsData.jobs || []);
+        })
+        .catch(err => {
+          window.AppUI.showToast(err.error || 'Failed to load rider portal', 'error');
+          const loginPanel = document.getElementById('rider-login-panel');
+          const dashPanel = document.getElementById('rider-dashboard-panel');
+          if (loginPanel) loginPanel.classList.remove('hidden');
+          if (dashPanel) dashPanel.classList.add('hidden');
+        })
+        .finally(() => window.AppUI.hideLoader());
+    },
+
+    populateProfileBar_(profile) {
+      const nameEl = document.getElementById('rider-name-display');
+      const metaEl = document.getElementById('rider-meta-display');
+      const statusLabel = document.getElementById('rider-duty-status-label');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (nameEl) nameEl.textContent = profile.full_name;
+      if (metaEl) metaEl.textContent = `${profile.vehicle_type} Courier | Safe Payload: ${profile.max_payload_kg} kg max`;
+
+      if (statusLabel) {
+        statusLabel.textContent = profile.current_status;
+        statusLabel.style.color = profile.current_status === 'AVAILABLE' ? 'var(--color-success)' : 'var(--color-danger)';
+      }
+
+      document.getElementById('rider-total-deliveries').textContent = profile.total_deliveries;
+      document.getElementById('rider-total-earnings').textContent = `${curr}${profile.total_earnings_inr}`;
+      document.getElementById('rider-rating').textContent = `★ ${profile.rating_avg}`;
+    },
+
+    populateActiveJob_(job) {
+      const activeSection = document.getElementById('rider-active-job-section');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!job) {
+        if (activeSection) activeSection.classList.add('hidden');
+        return;
+      }
+
+      if (activeSection) activeSection.classList.remove('hidden');
+
+      document.getElementById('active-job-order-id').textContent = `Order: ${job.order_id} (${job.total_weight_kg} kg)`;
+      document.getElementById('active-job-payout').textContent = `+ ${curr}${job.payout_inr}`;
+
+      // Pickup Shop
+      document.getElementById('active-job-pickup-shop').textContent = job.pickup.shop_name;
+      document.getElementById('active-job-pickup-address').textContent = job.pickup.address;
+      document.getElementById('active-job-pickup-phone').textContent = job.pickup.phone ? `📞 Shop Phone: ${job.pickup.phone}` : '';
+
+      // Drop Destination
+      document.getElementById('active-job-drop-address').textContent = `${job.drop.address_line} ${job.drop.landmark ? '(' + job.drop.landmark + ')' : ''}`;
+      document.getElementById('active-job-drop-locality').textContent = job.drop.locality;
+      document.getElementById('active-job-drop-payment').textContent = `💵 Collect: ${curr}${job.payment.collect_cash_inr} (${job.payment.method})`;
+
+      // Manage Active Milestone Buttons
+      const btnPickedUp = document.getElementById('btn-job-picked-up');
+      const btnOut = document.getElementById('btn-job-out-for-delivery');
+      const btnDelivered = document.getElementById('btn-job-delivered');
+
+      if (job.current_status === 'RIDER_ACCEPTED') {
+        btnPickedUp.classList.remove('hidden');
+        btnOut.classList.add('hidden');
+        btnDelivered.classList.add('hidden');
+        btnPickedUp.onclick = () => this.updateTransitMilestone_(job.order_id, 'PICKED_UP', 'Rider picked up bags at shop.');
+      } else if (job.current_status === 'PICKED_UP') {
+        btnPickedUp.classList.add('hidden');
+        btnOut.classList.remove('hidden');
+        btnDelivered.classList.add('hidden');
+        btnOut.onclick = () => this.updateTransitMilestone_(job.order_id, 'OUT_FOR_DELIVERY', 'Rider out for delivery.');
+      } else if (job.current_status === 'OUT_FOR_DELIVERY') {
+        btnPickedUp.classList.add('hidden');
+        btnOut.classList.add('hidden');
+        btnDelivered.classList.remove('hidden');
+        btnDelivered.onclick = () => this.updateTransitMilestone_(job.order_id, 'DELIVERED', 'Rice delivered safely at door.');
+      }
+    },
+
+    updateTransitMilestone_(orderId, nextStatus, remarks) {
+      window.AppUI.showLoader('Updating Delivery', 'Recording transit milestone...');
+
+      window.AppApi.call('updateDeliveryStatus', {
+        order_id: orderId,
+        next_status: nextStatus,
+        remarks: remarks
+      })
+      .then(res => {
+        window.AppUI.showToast(`Delivery updated to ${nextStatus}`, 'success');
+        this.fetchRiderDashboard_();
+      })
+      .catch(err => {
+        window.AppUI.showToast(err.error || 'Failed to update transit status', 'error');
+      })
+      .finally(() => window.AppUI.hideLoader());
+    },
+
+    populateJobsFeed_(jobs) {
+      const mount = document.getElementById('rider-jobs-feed-mount');
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!mount) return;
+
+      if (jobs.length === 0) {
+        mount.innerHTML = `
+          <div style="text-align:center;padding:32px 16px;color:#64748b;">
+            <p>No open delivery jobs matching your vehicle capacity right now. New packed orders will appear here automatically.</p>
+          </div>`;
+        return;
+      }
+
+      let jobsHtml = '';
+      jobs.forEach(job => {
+        jobsHtml += `
+          <div class="rider-job-card">
+            <div class="flex items-center justify-between">
+              <div>
+                <strong>Order: ${escapeHtml(job.order_id)}</strong>
+                <span class="badge" style="background-color:#e8f5e9;color:#1b4332;margin-left:8px;">Ready for Pickup</span>
+              </div>
+              <div class="job-payout-text">+ ${curr}${job.rider_payout_inr}</div>
+            </div>
+
+            <div class="rider-job-grid">
+              <div>
+                <span style="font-size:11px;color:#64748b;display:block;">PICKUP & DROP LOCALITY</span>
+                <strong>${escapeHtml(job.pickup_seller_name)}</strong> (${escapeHtml(job.pickup_locality)}) &rarr; <strong>${escapeHtml(job.drop_locality)}</strong>
+              </div>
+              <div>
+                <span style="font-size:11px;color:#64748b;display:block;">TOTAL LOAD WEIGHT</span>
+                <strong>${job.total_weight_kg} kg</strong>
+              </div>
+              <div>
+                <span style="font-size:11px;color:#64748b;display:block;">APPROX. DISTANCE</span>
+                <strong>~ ${job.approx_distance_km} km</strong>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="button" class="btn btn-primary btn-sm btn-claim-job" data-id="${job.order_id}">
+                ✓ ACCEPT & CLAIM DELIVERY
+              </button>
+            </div>
+          </div>`;
+      });
+
+      mount.innerHTML = jobsHtml;
+
+      // Bind Atomic Claim Job Buttons
+      mount.querySelectorAll('.btn-claim-job').forEach(btn => {
+        btn.onclick = (e) => {
+          const oid = e.currentTarget.getAttribute('data-id');
+          this.claimJob_(oid);
+        };
+      });
+    },
+
+    claimJob_(orderId) {
+      window.AppUI.showLoader('Claiming Delivery', 'Locking order assignment...');
+
+      window.AppApi.call('claimDeliveryJob', { order_id: orderId })
+        .then(res => {
+          window.AppUI.showToast('Delivery job claimed! Customer details unlocked.', 'success');
+          this.fetchRiderDashboard_();
+        })
+        .catch(err => {
+          window.AppUI.showToast(err.error || 'Job claim failed', 'error');
+        })
+        .finally(() => window.AppUI.hideLoader());
+    },
+
+    bindRiderEvents_() {
+      const loginBtn = document.getElementById('btn-rider-login');
+      const logoutBtn = document.getElementById('btn-rider-logout');
+      const toggleDutyBtn = document.getElementById('btn-toggle-rider-duty');
+
+      if (loginBtn) {
+        loginBtn.onclick = () => {
+          const phoneInput = document.getElementById('rider-login-phone');
+          const phone = phoneInput ? phoneInput.value.trim() : '';
+
+          if (phone.length === 10) {
+            window.AppUI.showLoader('Logging In', 'Verifying delivery partner credentials...');
+            window.AppApi.call('authenticateUser', { phone: phone, role: 'RIDER' })
+              .then(res => {
+                window.AppStore.setAuth(res.token, res.user);
+                window.AppUI.showToast('Courier session authenticated!', 'success');
+                this.render();
+              })
+              .catch(err => {
+                window.AppUI.showToast(err.error || 'Login failed', 'error');
+              })
+              .finally(() => window.AppUI.hideLoader());
+          } else {
+            window.AppUI.showToast('Please enter your 10-digit mobile number.', 'error');
+          }
+        };
+      }
+
+      if (logoutBtn) {
+        logoutBtn.onclick = () => {
+          window.AppStore.setAuth(null, null);
+          window.AppUI.showToast('Logged out of rider portal.', 'info');
+          this.render();
+        };
+      }
+
+      if (toggleDutyBtn) {
+        toggleDutyBtn.onclick = () => {
+          const currentStatus = currentRiderDashboard?.profile?.current_status || 'AVAILABLE';
+          const nextStatus = currentStatus === 'AVAILABLE' ? 'OFFLINE' : 'AVAILABLE';
+
+          window.AppUI.showLoader('Updating Status', 'Changing duty status...');
+          window.AppApi.call('toggleRiderAvailability', { status: nextStatus })
+            .then(res => {
+              window.AppUI.showToast(res.message, 'success');
+              this.fetchRiderDashboard_();
+            })
+            .catch(err => {
+              window.AppUI.showToast(err.error || 'Failed to toggle status', 'error');
+            })
+            .finally(() => window.AppUI.hideLoader());
+        };
+      }
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.RiderViewController = RiderViewController;
+  RiderViewController.init();
+
+})(window);
+</script>
