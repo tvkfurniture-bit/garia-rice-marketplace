@@ -1,0 +1,426 @@
+<script>
+/**
+ * ==============================================================================
+ * GARIA RICE MARKETPLACE™ - js_core.html
+ * Version: 1.0.0 | Production-Grade Hyperlocal Marketplace Engine
+ * Geography: Garia, Kolkata, West Bengal, India
+ * ==============================================================================
+ * Master Client State Store, Hash Router, and google.script.run RPC Bridge.
+ * Manages user sessions, single-seller cart enforcement, SPA navigation,
+ * toast alerts, modal dialogs, and asynchronous communication.
+ */
+
+(function(window) {
+  'use strict';
+
+  // ============================================================================
+  // 1. REACTIVE CLIENT STATE STORE (AppStore)
+  // ============================================================================
+  const STORAGE_KEYS = {
+    AUTH_TOKEN: 'grm_auth_token',
+    USER_PROFILE: 'grm_user_profile',
+    LOCALITY: 'grm_selected_locality',
+    CART: 'grm_active_cart'
+  };
+
+  const AppStore = {
+    state: {
+      authToken: localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN) || null,
+      currentUser: null,
+      selectedLocality: localStorage.getItem(STORAGE_KEYS.LOCALITY) || 'Garia Station',
+      cart: { seller_id: null, seller_name: null, items: [] },
+      serverContext: window.__INITIAL_SERVER_STATE__ || {}
+    },
+
+    listeners: [],
+
+    init() {
+      // Rehydrate user profile if token exists
+      const savedUser = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+      if (savedUser) {
+        try {
+          this.state.currentUser = JSON.parse(savedUser);
+        } catch (e) {
+          this.state.currentUser = null;
+        }
+      }
+
+      // Rehydrate cart
+      const savedCart = localStorage.getItem(STORAGE_KEYS.CART);
+      if (savedCart) {
+        try {
+          this.state.cart = JSON.parse(savedCart);
+        } catch (e) {
+          this.state.cart = { seller_id: null, seller_name: null, items: [] };
+        }
+      }
+    },
+
+    subscribe(listener) {
+      if (typeof listener === 'function') {
+        this.listeners.push(listener);
+      }
+    },
+
+    notify(event, data) {
+      this.listeners.forEach(fn => {
+        try { fn(event, data); } catch (e) { console.error('[AppStore] Listener error:', e); }
+      });
+    },
+
+    setAuth(token, user) {
+      this.state.authToken = token;
+      this.state.currentUser = user;
+      if (token) {
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+      }
+      this.notify('AUTH_CHANGED', { authenticated: !!token, user });
+    },
+
+    setLocality(locality) {
+      this.state.selectedLocality = locality;
+      localStorage.setItem(STORAGE_KEYS.LOCALITY, locality);
+      this.notify('LOCALITY_CHANGED', locality);
+    },
+
+    saveCart() {
+      localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(this.state.cart));
+      this.notify('CART_CHANGED', this.state.cart);
+    }
+  };
+
+  AppStore.init();
+  window.AppStore = AppStore;
+
+  // ============================================================================
+  // 2. ASYNCHRONOUS GOOGLE.SCRIPT.RUN RPC BRIDGE (AppApi)
+  // ============================================================================
+  const AppApi = {
+    /**
+     * Promisified wrapper for google.script.run.clientApiCall
+     * @param {string} action - API action name.
+     * @param {Object} [payload={}] - Input payload.
+     * @param {number} [timeoutMs=25000] - Timeout in milliseconds.
+     * @return {Promise<Object>} Resolves with data or rejects with error envelope.
+     */
+    call(action, payload = {}, timeoutMs = 25000) {
+      return new Promise((resolve, reject) => {
+        if (!window.google || !google.script || !google.script.run) {
+          const mockErr = { success: false, error: 'Google Apps Script client runtime unavailable.' };
+          AppUI.showToast(mockErr.error, 'error');
+          return reject(mockErr);
+        }
+
+        let isTimedOut = false;
+        const timer = setTimeout(() => {
+          isTimedOut = true;
+          const timeoutErr = {
+            success: false,
+            error: 'Server response timed out. Please check your internet connection and retry.',
+            code: 'REQUEST_TIMEOUT'
+          };
+          AppUI.showToast(timeoutErr.error, 'error');
+          reject(timeoutErr);
+        }, timeoutMs);
+
+        const token = AppStore.state.authToken;
+
+        google.script.run
+          .withSuccessHandler(response => {
+            if (isTimedOut) return;
+            clearTimeout(timer);
+
+            if (response && response.success) {
+              resolve(response.data);
+            } else {
+              const errMsg = (response && response.error) ? response.error : 'An unexpected error occurred.';
+              AppUI.showToast(errMsg, 'error');
+              reject(response || { success: false, error: errMsg });
+            }
+          })
+          .withFailureHandler(fatalErr => {
+            if (isTimedOut) return;
+            clearTimeout(timer);
+            const errMsg = fatalErr.message || 'Server communication failed. Please refresh.';
+            AppUI.showToast(errMsg, 'error');
+            reject({ success: false, error: errMsg, code: 'COMMUNICATION_FAILURE' });
+          })
+          .clientApiCall(action, payload, token);
+      });
+    }
+  };
+
+  window.AppApi = AppApi;
+
+  // ============================================================================
+  // 3. SINGLE-SELLER CART MANAGER (AppCart)
+  // ============================================================================
+  const AppCart = {
+    /**
+     * Adds rice product to cart with strict single-seller enforcement.
+     * @param {Object} product - Product record.
+     * @param {number} [quantity=1] - Quantity to add.
+     */
+    addItem(product, quantity = 1) {
+      const cart = AppStore.state.cart;
+      const targetSellerId = String(product.seller_id).trim();
+      const targetSellerName = product.seller_business_name || product.seller_name || 'Local Seller';
+
+      // Enforce Single-Seller Constraint: Prompt user if adding from another seller
+      if (cart.seller_id && cart.seller_id !== targetSellerId && cart.items.length > 0) {
+        AppUI.showModal(
+          'Start a New Basket?',
+          `<p style="margin-bottom:12px;color:#475569;">Your cart currently contains rice from <strong>${cart.seller_name}</strong>.</p>
+           <p style="color:#475569;">Each order must be delivered from a single local merchant to keep delivery transparent and fast. Would you like to clear your current cart and start a new order from <strong>${targetSellerName}</strong>?</p>`,
+          () => {
+            this.clear();
+            this.executeAddItem_(product, targetSellerId, targetSellerName, quantity);
+          },
+          'Clear & Add New Rice'
+        );
+        return;
+      }
+
+      this.executeAddItem_(product, targetSellerId, targetSellerName, quantity);
+    },
+
+    executeAddItem_(product, sellerId, sellerName, quantity) {
+      const cart = AppStore.state.cart;
+      cart.seller_id = sellerId;
+      cart.seller_name = sellerName;
+
+      const existingItem = cart.items.find(i => i.product_id === product.product_id);
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
+        cart.items.push({
+          product_id: product.product_id,
+          name: product.name_en,
+          variety: product.variety,
+          pack_size_kg: parseFloat(product.pack_size_kg) || 25,
+          unit_price_inr: parseFloat(product.price_inr) || 0,
+          quantity: quantity
+        });
+      }
+
+      AppStore.saveCart();
+      AppUI.showToast(`Added ${quantity}x ${product.name_en} to basket`, 'success');
+    },
+
+    updateQuantity(productId, delta) {
+      const cart = AppStore.state.cart;
+      const item = cart.items.find(i => i.product_id === productId);
+      if (!item) return;
+
+      item.quantity += delta;
+      if (item.quantity <= 0) {
+        cart.items = cart.items.filter(i => i.product_id !== productId);
+      }
+
+      if (cart.items.length === 0) {
+        cart.seller_id = null;
+        cart.seller_name = null;
+      }
+
+      AppStore.saveCart();
+    },
+
+    removeItem(productId) {
+      const cart = AppStore.state.cart;
+      cart.items = cart.items.filter(i => i.product_id !== productId);
+      if (cart.items.length === 0) {
+        cart.seller_id = null;
+        cart.seller_name = null;
+      }
+      AppStore.saveCart();
+      AppUI.showToast('Item removed from basket', 'info');
+    },
+
+    clear() {
+      AppStore.state.cart = { seller_id: null, seller_name: null, items: [] };
+      AppStore.saveCart();
+    },
+
+    getCount() {
+      return AppStore.state.cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    },
+
+    getSubtotal() {
+      return AppStore.state.cart.items.reduce((sum, item) => sum + (item.unit_price_inr * item.quantity), 0);
+    },
+
+    getTotalWeight() {
+      return AppStore.state.cart.items.reduce((sum, item) => sum + (item.pack_size_kg * item.quantity), 0);
+    }
+  };
+
+  window.AppCart = AppCart;
+
+  // ============================================================================
+  // 4. CLIENT UI FEEDBACK CONTROLLERS (AppUI)
+  // ============================================================================
+  const AppUI = {
+    showToast(message, type = 'info', duration = 3500) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+      toast.innerHTML = `<span><strong>${icon}</strong> ${message}</span>`;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.25s ease';
+        setTimeout(() => toast.remove(), 250);
+      }, duration);
+    },
+
+    showModal(title, bodyHtml, onConfirm = null, confirmText = 'Confirm') {
+      const modal = document.getElementById('app-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalBody = document.getElementById('modal-body');
+      const modalFooter = document.getElementById('modal-footer');
+      const closeBtn = document.getElementById('modal-close-btn');
+
+      if (!modal) return;
+
+      modalTitle.textContent = title;
+      modalBody.innerHTML = bodyHtml;
+      modalFooter.innerHTML = '';
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'btn btn-secondary';
+      cancelBtn.textContent = 'Cancel';
+      cancelBtn.onclick = () => this.hideModal();
+      modalFooter.appendChild(cancelBtn);
+
+      if (typeof onConfirm === 'function') {
+        const confirmBtn = document.createElement('button');
+        confirmBtn.className = 'btn btn-primary';
+        confirmBtn.textContent = confirmText;
+        confirmBtn.onclick = () => {
+          this.hideModal();
+          onConfirm();
+        };
+        modalFooter.appendChild(confirmBtn);
+      }
+
+      closeBtn.onclick = () => this.hideModal();
+      modal.onclick = (e) => { if (e.target === modal) this.hideModal(); };
+
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+    },
+
+    hideModal() {
+      const modal = document.getElementById('app-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    },
+
+    showLoader(title = 'Garia Rice Marketplace™', subtitle = 'Loading...') {
+      const loader = document.getElementById('global-loader');
+      if (loader) {
+        const textEl = loader.querySelector('.loader-text');
+        const subEl = loader.querySelector('.loader-sub');
+        if (textEl) textEl.textContent = title;
+        if (subEl) subEl.textContent = subtitle;
+        loader.style.opacity = '1';
+        loader.style.visibility = 'visible';
+      }
+    },
+
+    hideLoader() {
+      const loader = document.getElementById('global-loader');
+      if (loader) {
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+      }
+    }
+  };
+
+  window.AppUI = AppUI;
+
+  // ============================================================================
+  // 5. CLIENT-SIDE HASH ROUTER (AppRouter)
+  // ============================================================================
+  const AppRouter = {
+    routes: {},
+
+    register(routePrefix, handlerFn) {
+      this.routes[routePrefix] = handlerFn;
+    },
+
+    navigate(hashPath) {
+      window.location.hash = hashPath.startsWith('#') ? hashPath : '#' + hashPath;
+    },
+
+    handleRouteChange() {
+      const fullHash = window.location.hash.slice(1) || '/home';
+      const [path, queryString] = fullHash.split('?');
+      const segments = path.split('/').filter(Boolean);
+      const rootSegment = segments[0] || 'home';
+
+      // Parse query parameters
+      const params = {};
+      if (queryString) {
+        queryString.split('&').forEach(pair => {
+          const [k, v] = pair.split('=');
+          if (k) params[decodeURIComponent(k)] = decodeURIComponent(v || '');
+        });
+      }
+
+      // Hide all SPA views
+      document.querySelectorAll('.spa-view').forEach(view => view.classList.add('hidden'));
+
+      // Dispatch to registered view handler or fallback to home
+      const handler = this.routes[rootSegment] || this.routes['home'];
+      if (typeof handler === 'function') {
+        try {
+          handler(segments, params);
+        } catch (err) {
+          console.error('[AppRouter] Error rendering route:', err);
+          AppUI.showToast('Failed to load page content.', 'error');
+        }
+      }
+
+      // Scroll to top on navigation
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    init() {
+      window.addEventListener('hashchange', () => this.handleRouteChange());
+      
+      // Initial route hydration: match server activeRoute if hash is absent
+      if (!window.location.hash && AppStore.state.serverContext.initialRoute) {
+        const serverRoute = AppStore.state.serverContext.initialRoute;
+        window.location.hash = '#/' + (serverRoute === 'home' ? '' : serverRoute);
+      } else {
+        this.handleRouteChange();
+      }
+
+      // Hide loader once initial DOM binds
+      setTimeout(() => AppUI.hideLoader(), 250);
+    }
+  };
+
+  window.AppRouter = AppRouter;
+
+  // Initialize router when DOM is fully interactive
+  document.addEventListener('DOMContentLoaded', () => {
+    AppRouter.init();
+  });
+
+})(window);
+</script>
