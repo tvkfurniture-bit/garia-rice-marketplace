@@ -1,0 +1,599 @@
+<!-- ==============================================================================
+     GARIA RICE MARKETPLACE™ - home_view.html
+     Master Marketplace Homepage View (Sections 9, 10, 11, 12, 13 Compliance)
+     ============================================================================== -->
+
+<div class="home-view-container">
+
+  <!-- ============================================================================
+       1. HERO SECTION (Sections 10 & 11)
+       ============================================================================ -->
+  <section class="hero-section" aria-label="Welcome and hero search">
+    <div class="hero-content-wrap">
+      
+      <div class="hero-badge">
+        <span class="badge-icon">📍</span> Hyperlocal to Garia, Kolkata
+      </div>
+
+      <h1 class="hero-title">
+        Compare Rice Prices From Local Sellers
+      </h1>
+
+      <p class="hero-subtitle">
+        Choose the rice you want, compare sellers and delivery charges, and order from a nearby seller. Delivered directly to your home.
+      </p>
+
+      <div class="hero-cta-row">
+        <a href="#/compare" class="btn btn-primary hero-btn">
+          <span style="margin-right:6px;">⚖️</span> Compare Rice Prices
+        </a>
+        <a href="#/become-a-seller" class="btn btn-outline hero-btn" style="border-color:#ffffff;color:#ffffff;">
+          Become a Seller
+        </a>
+      </div>
+
+      <!-- Embedded Reusable Search Bar Component (File 28) -->
+      <div class="hero-search-mount">
+        <?!= include('search_bar') ?>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       2. VALUE PROPOSITION: WHY USE GARIA RICE MARKETPLACE (Section 12)
+       ============================================================================ -->
+  <section class="features-section" aria-label="Why choose Garia Rice Marketplace">
+    <div class="section-header text-center">
+      <h2 class="section-title">Why Choose Garia Rice Marketplace?</h2>
+      <p class="section-subtitle">Real local value with transparent delivery charges and verified merchants.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Card 1 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">⚖️</div>
+        <h3 class="feature-card-title">Compare Prices</h3>
+        <p class="feature-card-desc">See rice prices from multiple local sellers side by side for the exact same variety and pack size.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">📍</div>
+        <h3 class="feature-card-title">Nearby Sellers</h3>
+        <p class="feature-card-desc">Find sellers close to your delivery location in Garia Station, Patuli, Mahamayatala, and Boral.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">🚚</div>
+        <h3 class="feature-card-title">Transparent Delivery</h3>
+        <p class="feature-card-desc">See exact delivery fees before placing your order. No hidden surge pricing or checkout surprises.</p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">🏪</div>
+        <h3 class="feature-card-title">Support Local Sellers</h3>
+        <p class="feature-card-desc">Support verified local family-run rice shops and traditional mills in your neighborhood.</p>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">📦</div>
+        <h3 class="feature-card-title">Convenient Bulk Delivery</h3>
+        <p class="feature-card-desc">Receive bulky 25kg, 26kg, and 50kg rice bags carried safely to your doorstep by local riders.</p>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">⭐</div>
+        <h3 class="feature-card-title">Real Customer Reviews</h3>
+        <p class="feature-card-desc">Read reviews from verified neighbors who ordered and received rice through our platform.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       3. LIVE MULTI-SELLER COMPARISON PREVIEW (Section 16)
+       ============================================================================ -->
+  <section class="home-comparison-section" aria-label="Side by side rice comparison">
+    <div class="section-header">
+      <div class="flex items-center justify-between" style="flex-wrap:wrap;gap:10px;">
+        <div>
+          <h2 class="section-title">Best Local Value: Miniket 25kg</h2>
+          <p class="section-subtitle">Real-time delivered price comparison across verified Garia merchants.</p>
+        </div>
+        <a href="#/compare" class="btn btn-outline btn-sm">View Full Comparison Tray &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Embedded Comparison Component (File 29) -->
+    <div id="home-comparison-preview-mount">
+      <?!= include('comparison_table') ?>
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       4. BEST DELIVERED VALUE RICE (Dynamic Discovery Grid)
+       ============================================================================ -->
+  <section class="discovery-section" aria-label="Best delivered value products">
+    <div class="section-header flex items-center justify-between" style="flex-wrap:wrap;gap:10px;">
+      <div>
+        <h2 class="section-title">Best-Value Rice Near You</h2>
+        <p class="section-subtitle">Ranked by total delivered price for your selected locality.</p>
+      </div>
+      <a href="#/catalog" class="btn btn-secondary btn-sm">Explore All Rice &rarr;</a>
+    </div>
+
+    <div id="home-best-value-grid" class="product-grid">
+      <!-- Populated dynamically by HomeViewController -->
+      <div class="card text-center" style="grid-column:1/-1;padding:40px;">
+        <div style="font-size:28px;">🌾</div>
+        <p style="margin-top:8px;color:#64748b;">Loading best-value rice from local sellers...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       5. VERIFIED LOCAL SELLERS DIRECTORY PREVIEW
+       ============================================================================ -->
+  <section class="sellers-preview-section" aria-label="Verified local sellers directory">
+    <div class="section-header">
+      <h2 class="section-title">Verified Local Merchants in Garia</h2>
+      <p class="section-subtitle">Licensed shops offering authentic Bengal rice varieties.</p>
+    </div>
+
+    <div id="home-sellers-grid" class="sellers-grid">
+      <!-- Populated dynamically -->
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       6. ONBOARDING PARTNER CALL-TO-ACTION BANNER
+       ============================================================================ -->
+  <section class="partner-cta-banner" aria-label="Partner with us">
+    <div class="partner-cta-content">
+      <h2>Grow Your Local Business in Garia</h2>
+      <p>Are you a rice retail shop, wholesaler, or local courier? Join our hyperlocal network to reach nearby customers without high commissions.</p>
+      <div class="partner-btn-group">
+        <a href="#/become-a-seller" class="btn btn-primary" style="background-color:#ffffff;color:#1b4332;">Register Your Shop</a>
+        <a href="#/become-a-delivery-partner" class="btn btn-outline" style="border-color:#ffffff;color:#ffffff;">Deliver Rice (Earn Daily)</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ==============================================================================
+     HOME VIEW INLINE STYLES
+     ============================================================================== -->
+<style>
+.home-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* 1. Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 40px 20px 60px 20px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    padding: 60px 40px 70px 40px;
+  }
+}
+
+.hero-content-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #b7e4c7;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  margin-bottom: 14px;
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 42px;
+  }
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  max-width: 720px;
+  margin: 0 auto 28px auto;
+}
+
+@media (min-width: 768px) {
+  .hero-subtitle {
+    font-size: 18px;
+  }
+}
+
+.hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.hero-btn {
+  padding: 12px 28px;
+  font-size: 15px;
+}
+
+.hero-search-mount {
+  margin-top: 10px;
+}
+
+/* 2. Features Section */
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+
+@media (min-width: 768px) {
+  .section-title { font-size: 26px; }
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+.feature-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.feature-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.feature-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.feature-card-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* 3. Sellers Directory Preview Grid */
+.sellers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .sellers-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+.seller-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seller-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.seller-card-loc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.seller-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* 4. Partner Banner */
+.partner-cta-banner {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 40px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.partner-cta-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.partner-cta-content h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.partner-cta-content p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #94a3b8;
+  margin-bottom: 24px;
+}
+
+.partner-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+</style>
+
+<!-- ==============================================================================
+     HOME VIEW CONTROLLER (SPA Routing & Dynamic Discovery)
+     ============================================================================== -->
+<script>
+(function(window) {
+  'use strict';
+
+  const HomeViewController = {
+    init() {
+      // Register route with AppRouter
+      if (window.AppRouter) {
+        window.AppRouter.register('home', (segments, params) => {
+          this.render();
+        });
+      }
+
+      // Re-fetch products when user changes locality
+      if (window.AppStore) {
+        window.AppStore.subscribe((event, data) => {
+          if (event === 'LOCALITY_CHANGED') {
+            this.loadDiscoveryData();
+            // Refresh preview comparison
+            if (typeof window.renderComparisonMatrix === 'function') {
+              window.renderComparisonMatrix('Miniket', 25, data, 'home-comparison-preview-mount');
+            }
+          }
+        });
+      }
+    },
+
+    render() {
+      // Unhide home view container
+      const homeViewEl = document.getElementById('view-home');
+      if (homeViewEl) {
+        homeViewEl.classList.remove('hidden');
+      }
+
+      // Mount Miniket comparison preview
+      const locality = (window.AppStore && window.AppStore.state.selectedLocality) || 'Garia Station';
+      if (typeof window.renderComparisonMatrix === 'function') {
+        window.renderComparisonMatrix('Miniket', 25, locality, 'home-comparison-preview-mount');
+      }
+
+      // Fetch dynamic products and sellers
+      this.loadDiscoveryData();
+    },
+
+    loadDiscoveryData() {
+      const grid = document.getElementById('home-best-value-grid');
+      const sellersGrid = document.getElementById('home-sellers-grid');
+      const locality = (window.AppStore && window.AppStore.state.selectedLocality) || 'Garia Station';
+      const curr = (window.AppStore && window.AppStore.state.serverContext.currencySymbol) || '₹';
+
+      if (!window.AppApi) return;
+
+      window.AppApi.call('getPublicCatalog', {
+        customer_locality: locality,
+        limit: 8,
+        sort: 'BEST_VALUE'
+      })
+      .then(res => {
+        const products = res.products || [];
+
+        if (products.length === 0) {
+          if (grid) {
+            grid.innerHTML = `
+              <div class="card text-center" style="grid-column:1/-1;padding:32px;">
+                <p style="color:#64748b;">No products available for delivery to ${escapeHtml(locality)} yet.</p>
+              </div>`;
+          }
+          return;
+        }
+
+        // Render Product Cards
+        if (grid) {
+          let cardsHtml = '';
+          products.slice(0, 4).forEach((p, idx) => {
+            const isBest = idx === 0;
+            const bestBadge = isBest ? '<span class="badge badge-best-value" style="margin-bottom:6px;">🏆 Best Delivered Value</span>' : '';
+
+            cardsHtml += `
+              <div class="product-card card-hover">
+                <div class="product-card-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80" alt="${escapeHtml(p.name_en)}" class="product-card-img" loading="lazy">
+                </div>
+                <div class="product-card-body">
+                  ${bestBadge}
+                  <a href="#/product/${p.product_id}" style="text-decoration:none;color:inherit;">
+                    <h3 class="product-card-title">${escapeHtml(p.name_en)}</h3>
+                  </a>
+                  <div class="product-card-seller">🏪 ${escapeHtml(p.seller_business_name)} (${escapeHtml(p.seller_locality)})</div>
+
+                  <div style="font-size:12px;color:#64748b;margin-bottom:10px;">
+                    Pack: <strong>${p.pack_size_kg} kg</strong> | Grain: ${escapeHtml(p.grain_type)}
+                  </div>
+
+                  <div class="product-card-price-row">
+                    <div>
+                      <div class="price-main">${curr}${p.price_inr}</div>
+                      <div class="price-delivery-tag">+ ${curr}${p.delivery_fee_inr} delivery (~ ${p.approx_distance_km} km)</div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm btn-home-add" data-product-id="${p.product_id}">
+                      + Add
+                    </button>
+                  </div>
+                </div>
+              </div>`;
+          });
+
+          grid.innerHTML = cardsHtml;
+
+          // Bind Cart Buttons
+          grid.querySelectorAll('.btn-home-add').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const pid = e.currentTarget.getAttribute('data-product-id');
+              const found = products.find(x => x.product_id === pid);
+              if (found && window.AppCart) {
+                window.AppCart.addItem(found, 1);
+              }
+            });
+          });
+        }
+
+        // Render Verified Sellers Preview
+        if (sellersGrid) {
+          const uniqueSellers = [];
+          const seen = new Set();
+          products.forEach(p => {
+            if (!seen.has(p.seller_id)) {
+              seen.add(p.seller_id);
+              uniqueSellers.push(p);
+            }
+          });
+
+          let sellersHtml = '';
+          uniqueSellers.slice(0, 3).forEach(s => {
+            sellersHtml += `
+              <div class="seller-card">
+                <div class="seller-card-title">${escapeHtml(s.seller_business_name)}</div>
+                <div class="seller-card-loc">📍 ${escapeHtml(s.seller_locality)} (~ ${s.approx_distance_km} km away)</div>
+                <div style="font-size:12px;color:#1b4332;font-weight:600;">✓ FSSAI Registered Local Merchant</div>
+                <div class="seller-card-meta">
+                  <span class="badge" style="background-color:#e8f5e9;color:#1b4332;">★ ${s.seller_rating} Rating</span>
+                  <a href="#/catalog?locality=${encodeURIComponent(s.seller_locality)}" class="btn btn-outline btn-sm">View Stock</a>
+                </div>
+              </div>`;
+          });
+
+          sellersGrid.innerHTML = sellersHtml;
+        }
+
+      })
+      .catch(err => {
+        if (grid) {
+          grid.innerHTML = `
+            <div class="card text-center" style="grid-column:1/-1;padding:24px;color:var(--color-danger);">
+              Failed to load discovery products: ${escapeHtml(err.error || 'Connection error')}
+            </div>`;
+        }
+      });
+    }
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.HomeViewController = HomeViewController;
+  HomeViewController.init();
+
+})(window);
+</script>
